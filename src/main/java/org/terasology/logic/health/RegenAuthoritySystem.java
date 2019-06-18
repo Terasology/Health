@@ -96,13 +96,13 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
         // Add new regen if present, or remove RegenComponent
         operationsToInvoke.stream().filter(EntityRef::exists).forEach(regenEntity -> {
             RegenComponent regen = regenEntity.getComponent(RegenComponent.class);
-            regenSortedByTime.removeAll(regen.getLowestEndTime());
+            regenSortedByTime.removeAll(regen.soonestEndTime);
             regen.removeCompleted(currentWorldTime);
-            if (regen.isEmpty()) {
+            if (regen.regenValue.isEmpty()) {
                 regenEntity.removeComponent(RegenComponent.class);
             } else {
                 regenEntity.saveComponent(regen);
-                regenSortedByTime.put(regen.getLowestEndTime(), regenEntity);
+                regenSortedByTime.put(regen.soonestEndTime, regenEntity);
             }
         });
 
@@ -119,7 +119,7 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
                 health.currentHealth += regen.getRegenValue();
                 health.nextRegenTick = currentTime + 1000;
                 if (health.currentHealth >= health.maxHealth) {
-                    regenToBeRemoved.add(regen.getLowestEndTime());
+                    regenToBeRemoved.add(regen.soonestEndTime);
                     entity.removeComponent(RegenComponent.class);
                     entity.send(new OnFullyHealedEvent(entity));
                 }
@@ -135,7 +135,7 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
     public void onRegenAdded(ActivateRegenEvent event, EntityRef entity, RegenComponent regen,
                              HealthComponent health) {
         // Remove previous scheduled regen, new will be added by addRegenToScheduler()
-        regenSortedByTime.remove(regen.getLowestEndTime(), entity);
+        regenSortedByTime.remove(regen.soonestEndTime, entity);
         addRegenToScheduler(event, entity, regen, health);
     }
 
@@ -143,7 +143,7 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
     public void onRegenAddedWithoutComponent(ActivateRegenEvent event, EntityRef entity, HealthComponent health) {
         if (!entity.hasComponent(RegenComponent.class)) {
             RegenComponent regen = new RegenComponent();
-            regen.lowestEndTime = Long.MAX_VALUE;
+            regen.soonestEndTime = Long.MAX_VALUE;
             entity.addComponent(regen);
             addRegenToScheduler(event, entity, regen, health);
         }
@@ -159,13 +159,13 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
         } else {
             regen.addRegen(event.id, event.value, time.getGameTimeInMs() + (long) (event.endTime * 1000));
         }
-        regenSortedByTime.put(regen.getLowestEndTime(), entity);
+        regenSortedByTime.put(regen.soonestEndTime, entity);
     }
 
     @ReceiveEvent
     public void onRegenRemoved(DeactivateRegenEvent event, EntityRef entity, HealthComponent health,
                                RegenComponent regen) {
-        regenSortedByTime.remove(regen.getLowestEndTime(), entity);
+        regenSortedByTime.remove(regen.soonestEndTime, entity);
         if (event.id.equals(ALL_REGEN)) {
             entity.removeComponent(RegenComponent.class);
         } else {
@@ -173,8 +173,8 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
             if (event.id.equals(BASE_REGEN)) {
                 regen.removeRegen(WAIT);
             }
-            if (!regen.isEmpty()) {
-                regenSortedByTime.put(regen.getLowestEndTime(), entity);
+            if (!regen.regenValue.isEmpty()) {
+                regenSortedByTime.put(regen.soonestEndTime, entity);
             }
         }
     }
