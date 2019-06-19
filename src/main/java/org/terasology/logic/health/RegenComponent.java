@@ -32,7 +32,7 @@ public class RegenComponent implements Component {
         for (long value : regenEndTime.values()) {
             result = Math.min(result, value);
         }
-        return soonestEndTime;
+        return result;
     }
 
     public void addRegen(String id, float value, long endTime) {
