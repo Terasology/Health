@@ -94,6 +94,13 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
         event.consume();
     }
 
+    private float jumpOfCharacter(EntityRef entity){
+        HealthComponent health = entity.getComponent(HealthComponent.class);
+        CharacterMovementComponent charComp = entity.getComponent(CharacterMovementComponent.class);
+        return charComp.getJumpSpeed();
+
+    }
+
     private void doDamage(EntityRef entity, int damageAmount, Prefab damageType, EntityRef instigator, EntityRef directCause) {
         HealthComponent health = entity.getComponent(HealthComponent.class);
         CharacterMovementComponent characterMovementComponent = entity.getComponent(CharacterMovementComponent.class);
@@ -180,11 +187,15 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
      * @param event VerticalCollisionEvent sent when falling speed threshold is crossed.
      * @param entity The entity which is damaged due to falling.
      */
+
+
+
     @ReceiveEvent
     public void onLand(VerticalCollisionEvent event, EntityRef entity, HealthComponent health) {
         float speed = Math.abs(event.getVelocity().y);
+        float jump = jumpOfCharacter(entity);
 
-        highSpeedDamage(speed, entity, health.fallingDamageSpeedThreshold, health.excessSpeedDamageMultiplier);
+        highSpeedDamage(speed, entity, health.fallingDamageSpeedThreshold * jump, health.excessSpeedDamageMultiplier);
     }
 
     /**

@@ -16,6 +16,11 @@
 package org.terasology.logic.health;
 
 import org.terasology.entitySystem.Component;
+import org.terasology.entitySystem.entity.EntityRef;
+import org.terasology.logic.characters.CharacterMovementComponent;
+import org.terasology.logic.characters.GazeMountPointComponent;
+import org.terasology.math.geom.Vector3f;
+import org.terasology.network.ClientComponent;
 import org.terasology.network.Replicate;
 import org.terasology.rendering.nui.properties.TextField;
 
@@ -28,6 +33,9 @@ public class HealthComponent implements Component {
     /** Maximum allowed health, capped to this if exceeding this value. */
     @Replicate
     public int maxHealth = 20;
+
+
+
 
     /** Falling speed threshold above which damage is inflicted to entity. */
     @Replicate
