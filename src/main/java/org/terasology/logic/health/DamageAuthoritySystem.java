@@ -94,10 +94,10 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
         event.consume();
     }
 
-    private float jumpOfCharacter(EntityRef entity){
+    private float heightOfCharacter(EntityRef entity){
         HealthComponent health = entity.getComponent(HealthComponent.class);
         CharacterMovementComponent charComp = entity.getComponent(CharacterMovementComponent.class);
-        return charComp.getJumpSpeed();
+        return charComp.getPlayerHeight();
 
     }
 
@@ -193,9 +193,9 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
     @ReceiveEvent
     public void onLand(VerticalCollisionEvent event, EntityRef entity, HealthComponent health) {
         float speed = Math.abs(event.getVelocity().y);
-        float jump = jumpOfCharacter(entity);
+        float height = heightOfCharacter(entity);
 
-        highSpeedDamage(speed, entity, health.fallingDamageSpeedThreshold * jump, health.excessSpeedDamageMultiplier);
+        highSpeedDamage(speed, entity, health.fallingDamageSpeedThreshold * height/ 1.6f, health.excessSpeedDamageMultiplier);
     }
 
     /**
@@ -209,8 +209,9 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
         Vector3f vel = new Vector3f(event.getVelocity());
         vel.y = 0;
         float speed = vel.length();
+        float height = heightOfCharacter(entity);
 
-        highSpeedDamage(speed, entity, health.horizontalDamageSpeedThreshold, health.excessSpeedDamageMultiplier);
+        highSpeedDamage(speed, entity, height < 30 ? health.horizontalDamageSpeedThreshold : 10000, health.excessSpeedDamageMultiplier);
     }
 
     private void highSpeedDamage(float speed, EntityRef entity, float threshold, float damageMultiplier) {
