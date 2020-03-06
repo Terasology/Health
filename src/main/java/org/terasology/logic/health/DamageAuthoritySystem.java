@@ -96,7 +96,7 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
 
     private float heightOfCharacter(EntityRef entity) {
         CharacterMovementComponent charComp = entity.getComponent(CharacterMovementComponent.class);
-        return charComp.height;
+        return charComp.getPlayerHeight();
 
     }
 
