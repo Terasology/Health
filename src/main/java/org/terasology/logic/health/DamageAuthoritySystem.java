@@ -94,12 +94,6 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
         event.consume();
     }
 
-    private float heightOfCharacter(EntityRef entity) {
-        CharacterMovementComponent charComp = entity.getComponent(CharacterMovementComponent.class);
-        return charComp.getPlayerHeight();
-
-    }
-
     private void doDamage(EntityRef entity, int damageAmount, Prefab damageType, EntityRef instigator, EntityRef directCause) {
         HealthComponent health = entity.getComponent(HealthComponent.class);
         CharacterMovementComponent characterMovementComponent = entity.getComponent(CharacterMovementComponent.class);
@@ -192,7 +186,8 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
     @ReceiveEvent
     public void onLand(VerticalCollisionEvent event, EntityRef entity, HealthComponent health) {
         float speed = Math.abs(event.getVelocity().y);
-        float height = heightOfCharacter(entity);
+        CharacterMovementComponent charComp = entity.getComponent(CharacterMovementComponent.class);
+        float height = charComp.height;
 
         highSpeedDamage(speed, entity, health.fallingDamageSpeedThreshold * height / 1.6f, health.excessSpeedDamageMultiplier);
     }
@@ -208,7 +203,9 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
         Vector3f vel = new Vector3f(event.getVelocity());
         vel.y = 0;
         float speed = vel.length();
-        float height = heightOfCharacter(entity);
+        CharacterMovementComponent charComp = entity.getComponent(CharacterMovementComponent.class);
+        float height = charComp.height;
+        
         health.horizontalDamageSpeedThreshold = 14.1f + 0.73f * height + 0.02f * height * height;
 
         highSpeedDamage(speed, entity, health.horizontalDamageSpeedThreshold, health.excessSpeedDamageMultiplier);
