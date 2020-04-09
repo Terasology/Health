@@ -15,6 +15,7 @@
  */
 package org.terasology.logic.health;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
@@ -263,7 +264,8 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
         regen.regenValue.remove(id);
     }
 
-    private int getRegenValue(RegenComponent regen) {
+    @VisibleForTesting
+    int getRegenValue(RegenComponent regen) {
         float totalValue = regen.remainder;
         for (float value : regen.regenValue.values()) {
             totalValue += value;
