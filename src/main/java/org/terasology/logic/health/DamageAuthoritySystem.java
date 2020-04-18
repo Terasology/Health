@@ -203,7 +203,7 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
     /**
      * Inflicts damage to entity if horizontalDamageSpeedThreshold is breached.
      *
-     * @param event  HorizontalCollisionEvent sent when "falling horizontally".
+     * @param event HorizontalCollisionEvent sent when "falling horizontally".
      * @param entity Entity which is damaged on "horizontal fall".
      */
     @ReceiveEvent
