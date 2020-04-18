@@ -15,6 +15,7 @@
  */
 package org.terasology.logic.health;
 
+import org.terasology.assets.ResourceUrn;
 import org.terasology.audio.StaticSound;
 import org.terasology.audio.events.PlaySoundEvent;
 import org.terasology.audio.events.PlaySoundForOwnerEvent;
@@ -44,6 +45,9 @@ import org.terasology.math.geom.Vector3f;
 import org.terasology.registry.In;
 import org.terasology.utilities.random.FastRandom;
 import org.terasology.utilities.random.Random;
+import org.terasology.utilities.Assets;
+
+import java.util.Optional;
 
 /**
  * This system reacts to OnDamageEvent events and lowers health on the HealthComponent, and handles
@@ -59,6 +63,8 @@ import org.terasology.utilities.random.Random;
  */
 @RegisterSystem(RegisterMode.AUTHORITY)
 public class DamageAuthoritySystem extends BaseComponentSystem {
+    
+    public static final float DEFAULT_FALLING_THRESHOLD = 20f;
 
     @In
     private Time time;
@@ -180,22 +186,24 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
      * @param event VerticalCollisionEvent sent when falling speed threshold is crossed.
      * @param entity The entity which is damaged due to falling.
      */
-
-
-
     @ReceiveEvent
     public void onLand(VerticalCollisionEvent event, EntityRef entity, HealthComponent health) {
         float speed = Math.abs(event.getVelocity().y);
         CharacterMovementComponent charComp = entity.getComponent(CharacterMovementComponent.class);
+        Optional<Prefab> prefab = Assets.get(new ResourceUrn("engine:player"), Prefab.class);
+        CharacterMovementComponent moveDefault = prefab.get().getComponent(CharacterMovementComponent.class);
         float height = charComp.height;
+        float defaultHeight = moveDefault.height;
 
-        highSpeedDamage(speed, entity, health.fallingDamageSpeedThreshold * height / 1.6f, health.excessSpeedDamageMultiplier);
+        health.fallingDamageSpeedThreshold = DEFAULT_FALLING_THRESHOLD * (height / defaultHeight);
+
+        highSpeedDamage(speed, entity, health.fallingDamageSpeedThreshold, health.excessSpeedDamageMultiplier);
     }
 
     /**
      * Inflicts damage to entity if horizontalDamageSpeedThreshold is breached.
      *
-     * @param event HorizontalCollisionEvent sent when "falling horizontally".
+     * @param event  HorizontalCollisionEvent sent when "falling horizontally".
      * @param entity Entity which is damaged on "horizontal fall".
      */
     @ReceiveEvent
@@ -204,9 +212,12 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
         vel.y = 0;
         float speed = vel.length();
         CharacterMovementComponent charComp = entity.getComponent(CharacterMovementComponent.class);
+        Optional<Prefab> prefab = Assets.get(new ResourceUrn("engine:player"), Prefab.class);
+        CharacterMovementComponent moveDefault = prefab.get().getComponent(CharacterMovementComponent.class);
+        float defaultHeight = moveDefault.height;
         float height = charComp.height;
-        
-        health.horizontalDamageSpeedThreshold = 14.1f + 0.73f * height + 0.02f * height * height;
+
+        health.horizontalDamageSpeedThreshold = (float) Math.pow(height / defaultHeight, 1.1f) * 2f + 18;
 
         highSpeedDamage(speed, entity, health.horizontalDamageSpeedThreshold, health.excessSpeedDamageMultiplier);
     }
