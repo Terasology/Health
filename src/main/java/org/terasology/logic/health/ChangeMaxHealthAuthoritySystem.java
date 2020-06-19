@@ -18,8 +18,6 @@ import org.terasology.rendering.nui.widgets.UIIconBar;
 public class ChangeMaxHealthAuthoritySystem extends BaseComponentSystem {
     @In
     NUIManager nuiManager;
-    @In
-    HealthHud healthHud;
 
     @ReceiveEvent
     public void changeMaxHealth(ChangeMaxHealthEvent event, EntityRef player, HealthComponent health) {
