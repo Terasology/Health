@@ -28,5 +28,4 @@ public class ChangeMaxHealthAuthoritySystem extends BaseComponentSystem {
         UIIconBar healthBar = nuiManager.getHUD().find("healthBar", UIIconBar.class);
         healthBar.setMaxIcons(event.getNewMaxHealth() / 10);
     }
-
 }
