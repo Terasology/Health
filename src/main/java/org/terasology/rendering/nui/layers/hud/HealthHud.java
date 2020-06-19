@@ -15,12 +15,8 @@
  */
 package org.terasology.rendering.nui.layers.hud;
 
-import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.entitySystem.event.ReceiveEvent;
 import org.terasology.logic.health.HealthComponent;
-import org.terasology.logic.health.event.ChangeMaxHealthEvent;
 import org.terasology.logic.players.LocalPlayer;
-import org.terasology.logic.players.event.OnPlayerSpawnedEvent;
 import org.terasology.registry.In;
 import org.terasology.rendering.nui.databinding.ReadOnlyBinding;
 import org.terasology.rendering.nui.widgets.UIIconBar;
