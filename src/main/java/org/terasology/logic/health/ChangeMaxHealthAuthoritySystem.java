@@ -11,7 +11,6 @@ import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.logic.health.event.ChangeMaxHealthEvent;
 import org.terasology.registry.In;
 import org.terasology.rendering.nui.NUIManager;
-import org.terasology.rendering.nui.layers.hud.HealthHud;
 import org.terasology.rendering.nui.widgets.UIIconBar;
 
 @RegisterSystem(value = RegisterMode.AUTHORITY)
