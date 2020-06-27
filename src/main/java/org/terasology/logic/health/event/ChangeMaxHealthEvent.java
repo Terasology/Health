@@ -3,19 +3,13 @@
 
 package org.terasology.logic.health.event;
 
-import org.terasology.entitySystem.event.Event;
+import org.terasology.entitySystem.event.AbstractValueModifiableEvent;
 
 /**
  * This Event is sent out whenever a system wants to alter the maxHealth of an entity.
  */
-public class ChangeMaxHealthEvent implements Event {
-    private int newMaxHealth;
-
-    public ChangeMaxHealthEvent(int newMaxHealth) {
-        this.newMaxHealth = newMaxHealth;
-    }
-
-    public int getNewMaxHealth() {
-        return newMaxHealth;
+public class ChangeMaxHealthEvent extends AbstractValueModifiableEvent {
+    public ChangeMaxHealthEvent(float baseValue) {
+        super(baseValue);
     }
 }
