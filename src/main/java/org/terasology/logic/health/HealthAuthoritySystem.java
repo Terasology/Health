@@ -20,13 +20,21 @@ public class HealthAuthoritySystem extends BaseComponentSystem {
     @In
     NUIManager nuiManager;
 
+    /**
+     * Sends out an immutable notification event when maxHealth of a character is changed.
+     */
     @ReceiveEvent(priority = EventPriority.PRIORITY_TRIVIAL)
     public void changeMaxHealth(ChangeMaxHealthEvent event, EntityRef player, HealthComponent health) {
         player.send(new OnMaxHealthChangedEvent(health.maxHealth, (int) event.getResultValue()));
         health.maxHealth = (int) event.getResultValue();
+        health.currentHealth = Math.min(health.currentHealth, health.maxHealth);
         player.saveComponent(health);
     }
 
+    /**
+     * Reacts to the {@link OnMaxHealthChangedEvent} notification event.
+     * Is responsible for the change in maximum number of icons in the Health Bar UI.
+     */
     @ReceiveEvent
     public void onMaxHealthChanged(OnMaxHealthChangedEvent event, EntityRef player) {
         UIIconBar healthBar = nuiManager.getHUD().find("healthBar", UIIconBar.class);
