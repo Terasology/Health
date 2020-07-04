@@ -5,7 +5,7 @@ package org.terasology.logic.health.event;
 
 import org.terasology.entitySystem.event.Event;
 
-public class OnMaxHealthChangedEvent implements Event {
+public class MaxHealthChangedEvent implements Event {
     private final int newValue;
     private final int oldValue;
 
@@ -15,7 +15,7 @@ public class OnMaxHealthChangedEvent implements Event {
      * @param oldValue the entity's old maxHealth.
      * @param newValue the entity's new maxHealth. (must be greater zero)
      */
-    public OnMaxHealthChangedEvent(final int oldValue, final int newValue) {
+    public MaxHealthChangedEvent(final int oldValue, final int newValue) {
         if (newValue <= 0) {
             throw new IllegalArgumentException("zero or negative value");
         }
