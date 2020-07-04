@@ -40,8 +40,8 @@ public class HealthAuthoritySystem extends BaseComponentSystem {
     }
 
     /**
-     * Reacts to the {@link MaxHealthChangedEvent} notification event. Is responsible for the change in maximum number
-     * of icons in the Health Bar UI.
+     * Reacts to the {@link MaxHealthChangedEvent} notification event.
+     * Is responsible for the change in maximum number of icons in the Health Bar UI.
      */
     @ReceiveEvent
     public void onMaxHealthChanged(MaxHealthChangedEvent event, EntityRef player) {
