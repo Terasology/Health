@@ -60,8 +60,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
- * This system is responsible for giving blocks health when they are attacked and damaging them instead of destroying
- * them.
+ * This system is responsible for giving blocks health when they are attacked and
+ * damaging them instead of destroying them.
  */
 @RegisterSystem
 public class BlockDamageAuthoritySystem extends BaseComponentSystem {
@@ -81,9 +81,7 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
 
     private Random random = new FastRandom();
 
-    /**
-     * Consumes damage event if block is indestructible.
-     */
+    /** Consumes damage event if block is indestructible. */
     @ReceiveEvent
     public void beforeDamaged(BeforeDamagedEvent event, EntityRef blockEntity, BlockComponent blockComp) {
         if (!blockComp.block.isDestructible()) {
@@ -91,9 +89,7 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
         }
     }
 
-    /**
-     * Consumes damage event if entity acting as block is indestructible.
-     */
+    /** Consumes damage event if entity acting as block is indestructible. */
     @ReceiveEvent
     public void beforeDamaged(BeforeDamagedEvent event, EntityRef blockEntity, ActAsBlockComponent blockComp) {
         if (blockComp.block != null && !blockComp.block.getArchetypeBlock().isDestructible()) {
@@ -103,7 +99,6 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
 
     /**
      * Removes the marker component when block is fully healed.
-     *
      * @param event Event sent when block is fully healed
      * @param entity Block entity
      */
@@ -112,12 +107,9 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
         entity.removeComponent(BlockDamagedComponent.class);
     }
 
-    /**
-     * Adds marker component to block which is damaged.
-     */
+    /** Adds marker component to block which is damaged. */
     @ReceiveEvent
-    public void onDamaged(OnDamagedEvent event, EntityRef entity, BlockComponent blockComponent,
-                          LocationComponent locComp) {
+    public void onDamaged(OnDamagedEvent event, EntityRef entity, BlockComponent blockComponent, LocationComponent locComp) {
         onDamagedCommon(event, blockComponent.block.getBlockFamily(), locComp.getWorldPosition(), entity);
         if (!entity.hasComponent(BlockDamagedComponent.class)) {
             entity.addComponent(new BlockDamagedComponent());
@@ -125,17 +117,14 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
     }
 
     @ReceiveEvent
-    public void onDamaged(OnDamagedEvent event, EntityRef entity, ActAsBlockComponent blockComponent,
-                          LocationComponent locComp) {
+    public void onDamaged(OnDamagedEvent event, EntityRef entity, ActAsBlockComponent blockComponent, LocationComponent locComp) {
         if (blockComponent.block != null) {
             onDamagedCommon(event, blockComponent.block, locComp.getWorldPosition(), entity);
         }
     }
 
-    private void onDamagedCommon(OnDamagedEvent event, BlockFamily blockFamily, Vector3f location,
-                                 EntityRef entityRef) {
-        BlockDamageModifierComponent blockDamageSettings =
-                event.getType().getComponent(BlockDamageModifierComponent.class);
+    private void onDamagedCommon(OnDamagedEvent event, BlockFamily blockFamily, Vector3f location, EntityRef entityRef) {
+        BlockDamageModifierComponent blockDamageSettings = event.getType().getComponent(BlockDamageModifierComponent.class);
         boolean skipDamageEffects = false;
         if (blockDamageSettings != null) {
             skipDamageEffects = blockDamageSettings.skipPerBlockEffects;
@@ -145,9 +134,7 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
         }
     }
 
-    /**
-     * Calls helper function to create block particle effect and plays damage sound.
-     */
+    /** Calls helper function to create block particle effect and plays damage sound. */
     private void onPlayBlockDamageCommon(BlockFamily family, Vector3f location, EntityRef entityRef) {
         createBlockParticleEffect(family, location);
 
@@ -160,7 +147,7 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
 
     /**
      * Creates a new entity for the block damage particle effect.
-     * <p>
+     *
      * If the terrain texture of the damaged block is available, the particles will have the block texture. Otherwise,
      * the default sprite (smoke) is used.
      *
@@ -186,8 +173,7 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
 
             final List<org.joml.Vector2f> offsets = computeOffsets(blockAppearance, particleScale);
 
-            TextureOffsetGeneratorComponent textureOffsetGeneratorComponent =
-                    builder.getComponent(TextureOffsetGeneratorComponent.class);
+            TextureOffsetGeneratorComponent textureOffsetGeneratorComponent = builder.getComponent(TextureOffsetGeneratorComponent.class);
             textureOffsetGeneratorComponent.validOffsets.addAll(offsets);
         }
 
@@ -199,6 +185,7 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
      *
      * @param blockAppearance the block appearance information to generate offsets from
      * @param scale the scale of the texture area (should be in 0 < scale <= 1.0)
+     *
      * @return a list of random offsets sampled from all block parts
      */
     private List<org.joml.Vector2f> computeOffsets(BlockAppearance blockAppearance, float scale) {
@@ -207,8 +194,7 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
         final float pixelSize = relativeTileSize / absoluteTileSize;
         final int spriteWidth = TeraMath.ceilToInt(scale * absoluteTileSize);
 
-        final Stream<Vector2f> baseOffsets =
-                Arrays.stream(BlockPart.sideValues()).map(blockAppearance::getTextureAtlasPos);
+        final Stream<Vector2f> baseOffsets = Arrays.stream(BlockPart.sideValues()).map(blockAppearance::getTextureAtlasPos);
 
         return baseOffsets.flatMap(baseOffset ->
                 IntStream.range(0, 8).boxed().map(i ->
@@ -231,8 +217,7 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
 
     private void beforeDamageCommon(BeforeDamagedEvent event, Block block) {
         if (event.getDamageType() != null) {
-            BlockDamageModifierComponent blockDamage =
-                    event.getDamageType().getComponent(BlockDamageModifierComponent.class);
+            BlockDamageModifierComponent blockDamage = event.getDamageType().getComponent(BlockDamageModifierComponent.class);
             if (blockDamage != null) {
                 BlockFamily blockFamily = block.getBlockFamily();
                 for (String category : blockFamily.getCategories()) {
@@ -244,9 +229,7 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
         }
     }
 
-    /**
-     * Causes damage to block without health component, leads to adding health component to the block.
-     */
+    /** Causes damage to block without health component, leads to adding health component to the block. */
     @ReceiveEvent(netFilter = RegisterMode.AUTHORITY)
     public void onAttackHealthlessBlock(AttackEvent event, EntityRef targetEntity, BlockComponent blockComponent) {
         if (!targetEntity.hasComponent(HealthComponent.class)) {
@@ -255,19 +238,15 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
     }
 
     @ReceiveEvent(netFilter = RegisterMode.AUTHORITY)
-    public void onAttackHealthlessActAsBlock(AttackEvent event, EntityRef targetEntity,
-                                             ActAsBlockComponent actAsBlockComponent) {
+    public void onAttackHealthlessActAsBlock(AttackEvent event, EntityRef targetEntity, ActAsBlockComponent actAsBlockComponent) {
         if (!targetEntity.hasComponent(HealthComponent.class)) {
             DamageAuthoritySystem.damageEntity(event, targetEntity);
         }
     }
 
-    /**
-     * Adds health component to blocks when damaged.
-     */
+    /** Adds health component to blocks when damaged. */
     @ReceiveEvent
-    public void beforeDamagedEnsureHealthPresent(BeforeDamagedEvent event, EntityRef blockEntity,
-                                                 BlockComponent blockComponent) {
+    public void beforeDamagedEnsureHealthPresent(BeforeDamagedEvent event, EntityRef blockEntity, BlockComponent blockComponent) {
         if (!blockEntity.hasComponent(HealthComponent.class)) {
             Block type = blockComponent.block;
             if (type.isDestructible()) {
