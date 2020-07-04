@@ -197,10 +197,10 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
         final Stream<Vector2f> baseOffsets = Arrays.stream(BlockPart.sideValues()).map(blockAppearance::getTextureAtlasPos);
 
         return baseOffsets.flatMap(baseOffset ->
-                IntStream.range(0, 8).boxed().map(i ->
+                    IntStream.range(0, 8).boxed().map(i ->
                         new org.joml.Vector2f(JomlUtil.from(baseOffset)).add(random.nextInt(absoluteTileSize - spriteWidth) * pixelSize, random.nextInt(absoluteTileSize - spriteWidth) * pixelSize)
-                )
-        ).collect(Collectors.toList());
+                    )
+                ).collect(Collectors.toList());
     }
 
     @ReceiveEvent(netFilter = RegisterMode.AUTHORITY)
