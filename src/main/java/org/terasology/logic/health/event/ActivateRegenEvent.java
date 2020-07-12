@@ -57,6 +57,14 @@ public class ActivateRegenEvent implements Event {
      * <p>
      * The {@code endTime} denotes after how many seconds the regeneration effect phases out. Once the time span is
      * passed the effect will be removed from the entity.
+     * <p>
+     * For instance, the following constructor call could belong to a small healing potion which restores 8 health
+     * points every second over a duration of 5 seconds (e.g., healing 40 health points).
+     * <pre>
+     * {@code
+     * new ActivateRegenEvent("potions:smallHealingPotion", 8, 5);
+     * }
+     * </pre>
      *
      * @param id identifier for the cause of this effect
      * @param value additional health generation amount per tick
