@@ -91,7 +91,7 @@ public class RegenTest extends ModuleTestingEnvironment {
         RegenAuthoritySystem system = new RegenAuthoritySystem();
         assertEquals(7, system.getRegenValue(regen));
 
-        float tick = time.getGameTime() + 6 + 0.200f;
+        float tick = time.getGameTime() + 6 + 0.500f;
         runWhile(()-> time.getGameTime() <= tick);
 
         regen = player.getComponent(RegenComponent.class);

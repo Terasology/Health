@@ -77,8 +77,8 @@ public class BlockTest extends ModuleTestingEnvironment {
         assertTrue(testBlockEntity.hasComponent(BlockDamagedComponent.class));
         assertTrue(testBlockEntity.hasComponent(RegenComponent.class));
 
-        // Time for regen is 1 sec, 0.2 sec for processing buffer time
-        float regenTime = time.getGameTime() + 1 + 0.200f;
+        // Time for regen is 1 sec, 0.5 sec for processing buffer time
+        float regenTime = time.getGameTime() + 1 + 0.500f;
         runWhile(()-> time.getGameTime() <= regenTime);
 
         // On regen, health is fully restored, and BlockDamagedComponent is removed from the block
