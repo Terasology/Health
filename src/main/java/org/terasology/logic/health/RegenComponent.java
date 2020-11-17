@@ -31,7 +31,7 @@ public class RegenComponent implements Component {
     public Map<String, Float> regenValue = new HashMap<>();
 
     /**
-     * Registered regeneration action ids associated to their end time(?).
+     * Registered regeneration action ids associated to their end time.
      */
     @Replicate
     public SortedSetMultimap<Long, String> regenEndTime = TreeMultimap.create(Ordering.natural(),

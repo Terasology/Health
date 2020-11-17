@@ -49,7 +49,7 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
     private static final int CHECK_INTERVAL = 200;
 
     /**
-     * The in-game in ms at which entities are to be regenerated again.
+     * The in-game time in ms at which entities are to be regenerated again.
      */
     private static long nextTick;
 
