@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class RegenComponent implements Component {
     /**
-     * The timestamp in in-game time (ms) when the next regeneration action is due (or is to end?).
+     * The timestamp in in-game time (ms) when the next regeneration action ends.
      */
     @Replicate
     public long soonestEndTime = Long.MAX_VALUE;
@@ -32,9 +32,6 @@ public class RegenComponent implements Component {
 
     /**
      * Registered regeneration action ids associated to their end time(?).
-     * <p>
-     * Assumptions: - an action id can appear at multiple end times - an action id appears at most once at an end time
-     * (guaranteed by SetMultimap)
      */
     @Replicate
     public SortedSetMultimap<Long, String> regenEndTime = TreeMultimap.create(Ordering.natural(),

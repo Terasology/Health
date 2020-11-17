@@ -131,7 +131,6 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
     @ReceiveEvent
     public void onDelayedRegenActivation(DelayedActionTriggeredEvent event, EntityRef entity, HealthComponent health) {
         if (event.getActionId().equals(DELAYED_REGEN_ACTIVATION)) {
-            logger.debug("Sending delayed regen event");
             entity.send(new ActivateRegenEvent(health.regenRate));
         }
     }
