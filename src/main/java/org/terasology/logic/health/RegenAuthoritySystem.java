@@ -193,7 +193,7 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
     private void addRegenToScheduler(ActivateRegenEvent event, RegenComponent regen) {
         if (event.value != 0) {
             // handle indefinite regeneration actions
-            final long endTime = event.value < 0 ? -1 : time.getGameTimeInMs() + (long) (event.endTime * 1000);
+            final long endTime = event.endTime < 0 ? -1 : time.getGameTimeInMs() + (long) (event.endTime * 1000);
             regen.regenValue.put(event.id, event.value);
             regen.regenEndTime.put(endTime, event.id);
             if (endTime > 0) {
