@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.logic.health;
 
+import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terasology.audio.StaticSound;
@@ -32,7 +33,6 @@ import org.terasology.logic.health.event.DoRestoreEvent;
 import org.terasology.logic.health.event.OnDamagedEvent;
 import org.terasology.logic.inventory.ItemComponent;
 import org.terasology.math.TeraMath;
-import org.terasology.math.geom.Vector3f;
 import org.terasology.registry.In;
 import org.terasology.utilities.random.FastRandom;
 import org.terasology.utilities.random.Random;
