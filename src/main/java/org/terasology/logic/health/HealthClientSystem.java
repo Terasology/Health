@@ -30,14 +30,19 @@ import org.terasology.math.Direction;
 import org.terasology.registry.In;
 import org.terasology.rendering.nui.NUIManager;
 import org.terasology.rendering.nui.layers.hud.DamageDirection;
+import org.terasology.rendering.nui.layers.hud.MajorDamageOverlay;
 
 @RegisterSystem(RegisterMode.CLIENT)
 public class HealthClientSystem extends BaseComponentSystem {
 
-    private static final String REMOVE_DAMAGED_OVERLAY_ACTION = "Health:RemoveDamagedOverlay";
-    private static final String DAMAGED_OVERLAY = "damagedOverlay";
-    private static final long DAMAGED_OVERLAY_DELAY_MS = 150L;
-    private static final float DAMAGED_OVERLAY_REQUIRED_PERCENT = 0.25f;
+    private static final long DAMAGE_OVERLAY_DELAY_MS = 150L;
+    private static final String REMOVE_TOP_ACTION = "Health:RemoveTopHud";
+    private static final String REMOVE_BOTTOM_ACTION = "Health:RemoveBottomHud";
+    private static final String REMOVE_LEFT_ACTION = "Health:RemoveLeftHud";
+    private static final String REMOVE_RIGHT_ACTION = "Health:RemoveRightHud";
+    private static final String REMOVE_DAMAGE_OVERLAY_ACTION = "Health:RemoveMajorDamageOverlay";
+    private static final String DAMAGE_OVERLAY = "majorDamageOverlay";
+    private static final float DAMAGE_OVERLAY_REQUIRED_PERCENT = 0.25f;
 
     @In
     private NUIManager nuiManager;
@@ -45,7 +50,7 @@ public class HealthClientSystem extends BaseComponentSystem {
     @In
     private DelayManager delayManager;
 
-    private boolean overlayDisplaying = false;
+    private boolean overlayDisplaying;
     private DamageDirection damageDirection;
 
     @Override
@@ -57,51 +62,77 @@ public class HealthClientSystem extends BaseComponentSystem {
 
     @ReceiveEvent(components = PlayerCharacterComponent.class)
     public void onDamaged(OnDamagedEvent event, EntityRef entity) {
+        // Show the relevant direction element
         LocationComponent locationComponent = entity.getComponent(LocationComponent.class);
         EntityRef instigator = event.getInstigator();
         if (instigator != null && instigator.hasComponent(LocationComponent.class)) {
-            LocationComponent instigatorLocation = instigator.getComponent(LocationComponent.class);
-            Vector3f loc = new Vector3f();
-            loc = locationComponent.getWorldPosition(loc);
-            Vector3f instLoc = new Vector3f();
-            instLoc = instigatorLocation.getWorldPosition(instLoc);
-            Vector3f locDiff = instLoc.sub(loc);
-            locDiff.normalize();
+            double direction = determineDamageDirection(instigator, locationComponent);
+            if (direction <= 45.0 && direction > -45.0) {
+                damageDirection.setTop(true);
+                delayManager.addDelayedAction(entity, REMOVE_TOP_ACTION, DAMAGE_OVERLAY_DELAY_MS);
+            } else if (direction <= -45.0 && direction > -135.0) {
+                damageDirection.setRight(true);
+                delayManager.addDelayedAction(entity, REMOVE_RIGHT_ACTION, DAMAGE_OVERLAY_DELAY_MS);
+            } else if (direction <= 135.0 && direction > 45.0) {
+                damageDirection.setLeft(true);
+                delayManager.addDelayedAction(entity, REMOVE_LEFT_ACTION, DAMAGE_OVERLAY_DELAY_MS);
+            } else {
+                damageDirection.setBottom(true);
+                delayManager.addDelayedAction(entity, REMOVE_BOTTOM_ACTION, DAMAGE_OVERLAY_DELAY_MS);
+            }
+        }
 
-            Vector3f worldFacing = new Vector3f();
-            // facing x and z are "how much" of that direction are we facing
-            // e.g. (0.0, 1.0) would mean that going forward would increase z position without increasing x position
-            worldFacing = locationComponent.getWorldDirection(worldFacing);
-            worldFacing.normalize();
-
-            double angleDegrees = rad2Deg(worldFacing.angleSigned(locDiff, Direction.UP.asVector3f()));
-
-            if (!overlayDisplaying) {
-                if (angleDegrees <= 45.0 && angleDegrees > -45.0) {
-                    damageDirection.setTop(true);
-                } else if (angleDegrees <= -45.0 && angleDegrees > -135.0) {
-                    damageDirection.setRight(true);
-                } else if (angleDegrees <= 135.0 && angleDegrees > 45.0) {
-                    damageDirection.setLeft(true);
-                } else {
-                    damageDirection.setBottom(true);
-                }
+        // Is it major damage?
+        HealthComponent healthComponent = entity.getComponent(HealthComponent.class);
+        int amount = event.getDamageAmount();
+        int current = healthComponent.currentHealth;
+        if (current > 0 && amount > 0) {
+            float percent = (float) amount / current;
+            if (percent >= DAMAGE_OVERLAY_REQUIRED_PERCENT && !overlayDisplaying) {
                 overlayDisplaying = true;
-                delayManager.addDelayedAction(entity, REMOVE_DAMAGED_OVERLAY_ACTION, DAMAGED_OVERLAY_DELAY_MS);
+                nuiManager.addOverlay(DAMAGE_OVERLAY, MajorDamageOverlay.class);
+                delayManager.addDelayedAction(entity, REMOVE_DAMAGE_OVERLAY_ACTION, DAMAGE_OVERLAY_DELAY_MS);
             }
         }
     }
 
-    private double rad2Deg(double rad) {
-        return rad / Math.PI * 180.0;
+    private double determineDamageDirection(EntityRef instigator, LocationComponent locationComponent) {
+        LocationComponent instigatorLocation = instigator.getComponent(LocationComponent.class);
+        Vector3f loc = new Vector3f();
+        loc = locationComponent.getWorldPosition(loc);
+        Vector3f instLoc = new Vector3f();
+        instLoc = instigatorLocation.getWorldPosition(instLoc);
+        Vector3f locDiff = instLoc.sub(loc);
+        locDiff.normalize();
+
+        Vector3f worldFacing = new Vector3f();
+        // facing x and z are "how much" of that direction we are facing
+        // e.g. (0.0, 1.0) means that going forward increases world z position without increasing x position
+        worldFacing = locationComponent.getWorldDirection(worldFacing);
+        worldFacing.normalize();
+
+        return Math.toDegrees(worldFacing.angleSigned(locDiff, Direction.UP.asVector3f()));
     }
 
     @ReceiveEvent
     public void onDelayedAction(DelayedActionTriggeredEvent event, EntityRef entityRef) {
-        if (event.getActionId().equals(REMOVE_DAMAGED_OVERLAY_ACTION)) {
-            nuiManager.removeOverlay(DAMAGED_OVERLAY);
-            overlayDisplaying = false;
-            damageDirection.clearAll();
+        switch (event.getActionId()) {
+            case REMOVE_DAMAGE_OVERLAY_ACTION:
+                nuiManager.removeOverlay(DAMAGE_OVERLAY);
+                overlayDisplaying = false;
+                break;
+            case REMOVE_TOP_ACTION:
+                damageDirection.setTop(false);
+                break;
+            case REMOVE_BOTTOM_ACTION:
+                damageDirection.setBottom(false);
+                break;
+            case REMOVE_LEFT_ACTION:
+                damageDirection.setLeft(false);
+                break;
+            case REMOVE_RIGHT_ACTION:
+                damageDirection.setRight(false);
+                break;
         }
     }
 
