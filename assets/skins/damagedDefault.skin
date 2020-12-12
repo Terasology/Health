@@ -3,7 +3,7 @@
     "elements": {
         "UIScreenLayer": {
             "background-scale-mode": "stretch",
-            "background": "reddenedBackground"
+            "background": "Health:damageDown"
         },
         "UILabel": {
             "font": "NotoSans-Regular-Title"
