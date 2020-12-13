@@ -220,7 +220,7 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
      */
     @ReceiveEvent
     public void onCrash(HorizontalCollisionEvent event, EntityRef entity, HealthComponent health) {
-        Vector3f vel = new Vector3f(JomlUtil.from(event.getVelocity()));
+        Vector3f vel = new Vector3f(event.getVelocity());
         vel.y = 0;
         float speed = vel.length();
 
@@ -247,7 +247,7 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
     @ReceiveEvent
     public void onCrash(HorizontalCollisionEvent event, EntityRef entity, CharacterSoundComponent characterSounds,
                         HealthComponent healthComponent) {
-        Vector3f horizVelocity = new Vector3f(JomlUtil.from(event.getVelocity()));
+        Vector3f horizVelocity = new Vector3f(event.getVelocity());
         horizVelocity.y = 0;
         float velocity = horizVelocity.length();
 
