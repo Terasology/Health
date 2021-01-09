@@ -16,11 +16,11 @@
 package org.terasology.logic.health;
 
 import com.google.common.collect.Sets;
+import org.joml.Vector3i;
 import org.junit.Test;
 import org.terasology.engine.Time;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.characters.events.AttackEvent;
-import org.terasology.math.geom.Vector3i;
 import org.terasology.moduletestingenvironment.ModuleTestingEnvironment;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
@@ -33,7 +33,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class BlockTest extends ModuleTestingEnvironment {
-    private static final Vector3i BLOCK_LOCATION = Vector3i.zero().add(Vector3i.down());
+    private static final Vector3i BLOCK_LOCATION = new Vector3i().add(0, -1, 0);
 
     private WorldProvider worldProvider;
     private Time time;
