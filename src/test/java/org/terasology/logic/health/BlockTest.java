@@ -64,7 +64,7 @@ public class BlockTest extends ModuleTestingEnvironment {
         testBlockEntity = blockEntityRegistry.getExistingBlockEntityAt(BLOCK_LOCATION);
     }
 
-    private void forceAndSetBlock(Vector3i position, Block material) {
+    private void forceAndSetBlock(Vector3ic position, Block material) {
         forceAndWaitForGeneration(position);
         Block result = worldProvider.setBlock(position, material);
     }
