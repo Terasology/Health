@@ -33,7 +33,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class BlockTest extends ModuleTestingEnvironment {
-    private static final Vector3i BLOCK_LOCATION = new Vector3i().add(0, -1, 0);
+    private static final Vector3ic BLOCK_LOCATION = new Vector3i(0, 0, 0).add(0, -1, 0);
 
     private WorldProvider worldProvider;
     private Time time;
