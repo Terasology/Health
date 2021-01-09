@@ -17,6 +17,7 @@ package org.terasology.logic.health;
 
 import com.google.common.collect.Sets;
 import org.joml.Vector3i;
+import org.joml.Vector3ic;
 import org.junit.Test;
 import org.terasology.engine.Time;
 import org.terasology.entitySystem.entity.EntityRef;
