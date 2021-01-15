@@ -100,10 +100,7 @@ public class HealthClientSystem extends BaseComponentSystem {
         LocationComponent instigatorLocation = instigator.getComponent(LocationComponent.class);
         Vector3f loc = new Vector3f();
         loc = locationComponent.getWorldPosition(loc);
-        Vector3f instLoc = new Vector3f();
-        instLoc = instigatorLocation.getWorldPosition(instLoc);
-        Vector3f locDiff = instLoc.sub(loc);
-        locDiff.normalize();
+		Vector3f locDiff = instigatorLocation.getWorldPosition(new Vector3f()).sub(loc).normalize();
 
         Vector3f worldFacing = new Vector3f();
         // facing x and z are "how much" of that direction we are facing
