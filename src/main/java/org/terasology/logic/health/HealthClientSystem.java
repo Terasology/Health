@@ -104,7 +104,7 @@ public class HealthClientSystem extends BaseComponentSystem {
 
         // facing x and z are "how much" of that direction we are facing
         // e.g. (0.0, 1.0) means that going forward increases world z position without increasing x position
-		Vector3f worldFacing = locationComponent.getWorldDirection(new Vector3f()).normalize();
+        Vector3f worldFacing = locationComponent.getWorldDirection(new Vector3f()).normalize();
 
         return Math.toDegrees(worldFacing.angleSigned(locDiff, Direction.UP.asVector3f()));
     }
