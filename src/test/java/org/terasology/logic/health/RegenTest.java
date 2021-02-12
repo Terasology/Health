@@ -15,7 +15,7 @@
  */
 package org.terasology.logic.health;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.terasology.engine.Time;
 import org.terasology.entitySystem.entity.EntityManager;
