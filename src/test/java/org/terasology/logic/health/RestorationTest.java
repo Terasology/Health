@@ -1,18 +1,5 @@
-/*
- * Copyright 2019 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.logic.health;
 
 import org.junit.jupiter.api.Test;
@@ -34,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MTEExtension.class)
-@Dependencies({"Health"})
+@Dependencies("Health")
 public class RestorationTest {
 
     @In
@@ -42,15 +29,20 @@ public class RestorationTest {
     @In
     protected ModuleTestingHelper helper;
 
-    @Test
-    public void restoreTest() {
+    private EntityRef newPlayer(int currentHealth) {
         HealthComponent healthComponent = new HealthComponent();
-        healthComponent.currentHealth = 0;
+        healthComponent.currentHealth = currentHealth;
         healthComponent.maxHealth = 100;
 
         final EntityRef player = entityManager.create();
         player.addComponent(new PlayerCharacterComponent());
         player.addComponent(healthComponent);
+        return player;
+    }
+
+    @Test
+    public void restoreTest() {
+        final EntityRef player = newPlayer(0);
 
         player.send(new DoRestoreEvent(10));
         assertEquals(player.getComponent(HealthComponent.class).currentHealth, 10);
@@ -66,13 +58,7 @@ public class RestorationTest {
         List<BeforeRestoreEvent> list = receiver.getEvents();
         assertTrue(list.isEmpty());
 
-        HealthComponent healthComponent = new HealthComponent();
-        healthComponent.currentHealth = 0;
-        healthComponent.maxHealth = 100;
-
-        final EntityRef player = entityManager.create();
-        player.addComponent(new PlayerCharacterComponent());
-        player.addComponent(healthComponent);
+        final EntityRef player = newPlayer(0);
 
         player.send(new DoRestoreEvent(10));
         assertEquals(1, list.size());
@@ -80,13 +66,7 @@ public class RestorationTest {
 
     @Test
     public void restoreEventCancelTest() {
-        HealthComponent healthComponent = new HealthComponent();
-        healthComponent.currentHealth = 0;
-        healthComponent.maxHealth = 100;
-
-        final EntityRef player = entityManager.create();
-        player.addComponent(new PlayerCharacterComponent());
-        player.addComponent(healthComponent);
+        final EntityRef player = newPlayer(0);
 
         TestEventReceiver<BeforeRestoreEvent> receiver = new TestEventReceiver<>(helper.getHostContext(),
                 BeforeRestoreEvent.class,
@@ -99,13 +79,7 @@ public class RestorationTest {
 
     @Test
     public void restorationModifyEventTest() {
-        HealthComponent healthComponent = new HealthComponent();
-        healthComponent.currentHealth = 0;
-        healthComponent.maxHealth = 100;
-
-        final EntityRef player = entityManager.create();
-        player.addComponent(new PlayerCharacterComponent());
-        player.addComponent(healthComponent);
+        final EntityRef player = newPlayer(0);
 
         TestEventReceiver<BeforeRestoreEvent> receiver = new TestEventReceiver<>(helper.getHostContext(),
                 BeforeRestoreEvent.class,
@@ -120,13 +94,7 @@ public class RestorationTest {
 
     @Test
     public void restorationNegativeTest() {
-        HealthComponent healthComponent = new HealthComponent();
-        healthComponent.currentHealth = 50;
-        healthComponent.maxHealth = 100;
-
-        final EntityRef player = entityManager.create();
-        player.addComponent(new PlayerCharacterComponent());
-        player.addComponent(healthComponent);
+        final EntityRef player = newPlayer(50);
 
         player.send(new DoRestoreEvent(-10));
         // No healing happens when base restoration amount is negative, with no negative multipliers.
@@ -135,13 +103,7 @@ public class RestorationTest {
 
     @Test
     public void restorationNegativeModifyEventTest() {
-        HealthComponent healthComponent = new HealthComponent();
-        healthComponent.currentHealth = 50;
-        healthComponent.maxHealth = 100;
-
-        final EntityRef player = entityManager.create();
-        player.addComponent(new PlayerCharacterComponent());
-        player.addComponent(healthComponent);
+        final EntityRef player = newPlayer(50);
 
         TestEventReceiver<BeforeRestoreEvent> receiver = new TestEventReceiver<>(helper.getHostContext(),
                 BeforeRestoreEvent.class,
