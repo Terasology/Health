@@ -53,27 +53,27 @@ public class RestorationTest {
 
     @Test
     public void restoreEventSentTest() {
-        TestEventReceiver<BeforeRestoreEvent> receiver = new TestEventReceiver<>(helper.getHostContext(),
-                BeforeRestoreEvent.class);
-        List<BeforeRestoreEvent> list = receiver.getEvents();
-        assertTrue(list.isEmpty());
+        try (TestEventReceiver<BeforeRestoreEvent> receiver = new TestEventReceiver<>(helper.getHostContext(),
+                BeforeRestoreEvent.class)) {
+            List<BeforeRestoreEvent> list = receiver.getEvents();
+            assertTrue(list.isEmpty());
 
-        final EntityRef player = newPlayer(0);
+            final EntityRef player = newPlayer(0);
 
-        player.send(new DoRestoreEvent(10));
-        assertEquals(1, list.size());
+            player.send(new DoRestoreEvent(10));
+            assertEquals(1, list.size());
+        }
     }
 
     @Test
     public void restoreEventCancelTest() {
         final EntityRef player = newPlayer(0);
 
-        TestEventReceiver<BeforeRestoreEvent> receiver = new TestEventReceiver<>(helper.getHostContext(),
+        try (TestEventReceiver<BeforeRestoreEvent> ignored = new TestEventReceiver<>(helper.getHostContext(),
                 BeforeRestoreEvent.class,
-                (event, entity) -> {
-                    event.consume();
-                });
-        player.send(new DoRestoreEvent(10));
+                (event, entity) -> event.consume())) {
+            player.send(new DoRestoreEvent(10));
+        }
         assertEquals(0, player.getComponent(HealthComponent.class).currentHealth);
     }
 
@@ -81,14 +81,15 @@ public class RestorationTest {
     public void restorationModifyEventTest() {
         final EntityRef player = newPlayer(0);
 
-        TestEventReceiver<BeforeRestoreEvent> receiver = new TestEventReceiver<>(helper.getHostContext(),
+        try (TestEventReceiver<BeforeRestoreEvent> ignored = new TestEventReceiver<>(helper.getHostContext(),
                 BeforeRestoreEvent.class,
                 (event, entity) -> {
                     event.add(5);
                     event.multiply(2);
-                });
-        // Expected value is ( initial:10 + 5 ) * 2 == 30
-        player.send(new DoRestoreEvent(10));
+                })) {
+            // Expected value is ( initial:10 + 5 ) * 2 == 30
+            player.send(new DoRestoreEvent(10));
+        }
         assertEquals(30, player.getComponent(HealthComponent.class).currentHealth);
     }
 
@@ -105,14 +106,15 @@ public class RestorationTest {
     public void restorationNegativeModifyEventTest() {
         final EntityRef player = newPlayer(50);
 
-        TestEventReceiver<BeforeRestoreEvent> receiver = new TestEventReceiver<>(helper.getHostContext(),
+        try (TestEventReceiver<BeforeRestoreEvent> ignored = new TestEventReceiver<>(helper.getHostContext(),
                 BeforeRestoreEvent.class,
                 (event, entity) -> {
                     event.multiply(-2);
-                });
-        // Expected restoration value is ( initial:10 ) * (-2) == (-20)
-        // So, final health value: 50 + (-20) == 30
-        player.send(new DoRestoreEvent(10));
+                })) {
+            // Expected restoration value is ( initial:10 ) * (-2) == (-20)
+            // So, final health value: 50 + (-20) == 30
+            player.send(new DoRestoreEvent(10));
+        }
         assertEquals(30, player.getComponent(HealthComponent.class).currentHealth);
     }
 }
