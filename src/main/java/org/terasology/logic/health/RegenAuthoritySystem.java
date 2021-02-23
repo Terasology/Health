@@ -126,7 +126,7 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
                 logger.debug("Entity '{}' without RegenComponent or HealthComponent scheduled for regeneration - skipping", entity);
                 continue;
             }
-            if (health != null && health.nextRegenTick < currentTime) {
+            if (health.nextRegenTick < currentTime) {
                 health.currentHealth += getRegenValue(regen);
                 health.nextRegenTick = currentTime + 1000;
                 if (health.currentHealth >= health.maxHealth) {
