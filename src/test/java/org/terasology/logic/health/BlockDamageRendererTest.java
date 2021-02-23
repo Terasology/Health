@@ -3,6 +3,8 @@
 
 package org.terasology.logic.health;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -48,17 +50,24 @@ class BlockDamageRendererTest {
         );
     }
 
-    @ParameterizedTest
-    @MethodSource("validHealthComponents")
-    void getDamageEffectsNumber_validHealthComponents(int expected, HealthComponent health) {
-        assertEquals(expected, blockDamageRenderer.getDamageEffectsNumber(health),
-                "unexpected damage effect number for " + display(health));
-    }
+    @DisplayName("getDamageEffectsNumber should")
+    @Nested
+    class DamageEffectsNumber {
+        @ParameterizedTest
+        @MethodSource("validHealthComponents")
+        @DisplayName("yield correct damage effect number on valid health component")
+        void correctOnValidHealthComponent(int expected, HealthComponent health) {
+            assertEquals(expected, blockDamageRenderer.getDamageEffectsNumber(health),
+                    "unexpected damage effect number for " + display(health));
+        }
 
-    @ParameterizedTest
-    @MethodSource("invalidHealthComponents")
-    void getDamageEffectsNumber_invalidHealthComponents(HealthComponent health) {
-        assertThrows(IllegalArgumentException.class,() -> blockDamageRenderer.getDamageEffectsNumber(health),
-                "expected IllegalArgumentExcepction for " + display(health));
+        @ParameterizedTest
+        @MethodSource("invalidHealthComponents")
+        @DisplayName("throw exception on invalid health component")
+        void exceptionOnInvalidHealthComponent(HealthComponent health) {
+            assertThrows(IllegalArgumentException.class, () -> blockDamageRenderer.getDamageEffectsNumber(health),
+                    "expected IllegalArgumentException for " + display(health));
+        }
+
     }
 }
