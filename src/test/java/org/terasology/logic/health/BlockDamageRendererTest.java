@@ -54,7 +54,7 @@ class BlockDamageRendererTest {
     @Nested
     class DamageEffectsNumber {
         @ParameterizedTest
-        @MethodSource("validHealthComponents")
+        @MethodSource("org.terasology.logic.health.BlockDamageRendererTest#validHealthComponents")
         @DisplayName("yield correct damage effect number on valid health component")
         void correctOnValidHealthComponent(int expected, HealthComponent health) {
             assertEquals(expected, blockDamageRenderer.getDamageEffectsNumber(health),
@@ -62,7 +62,7 @@ class BlockDamageRendererTest {
         }
 
         @ParameterizedTest
-        @MethodSource("invalidHealthComponents")
+        @MethodSource("org.terasology.logic.health.BlockDamageRendererTest#invalidHealthComponents")
         @DisplayName("throw exception on invalid health component")
         void exceptionOnInvalidHealthComponent(HealthComponent health) {
             assertThrows(IllegalArgumentException.class, () -> blockDamageRenderer.getDamageEffectsNumber(health),
