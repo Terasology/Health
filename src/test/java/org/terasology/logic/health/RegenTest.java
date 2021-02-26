@@ -1,23 +1,9 @@
-/*
- * Copyright 2019 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.logic.health;
 
-import com.google.common.collect.Sets;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.terasology.engine.Time;
 import org.terasology.entitySystem.entity.EntityManager;
 import org.terasology.entitySystem.entity.EntityRef;
@@ -25,30 +11,25 @@ import org.terasology.logic.health.event.ActivateRegenEvent;
 import org.terasology.logic.health.event.DeactivateRegenEvent;
 import org.terasology.logic.health.event.DoDamageEvent;
 import org.terasology.logic.players.PlayerCharacterComponent;
-import org.terasology.moduletestingenvironment.ModuleTestingEnvironment;
+import org.terasology.moduletestingenvironment.MTEExtension;
+import org.terasology.moduletestingenvironment.ModuleTestingHelper;
+import org.terasology.moduletestingenvironment.extension.Dependencies;
+import org.terasology.registry.In;
 
-import java.util.Set;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+@ExtendWith(MTEExtension.class)
+@Dependencies({"Health"})
+public class RegenTest {
 
-public class RegenTest extends ModuleTestingEnvironment {
+    @In
+    protected EntityManager entityManager;
+    @In
+    protected Time time;
+    @In
+    protected ModuleTestingHelper helper;
 
-    private EntityManager entityManager;
-    private Time time;
-
-    @Override
-    public Set<String> getDependencies() {
-        Set<String> modules = Sets.newHashSet();
-        modules.add("Health");
-        return modules;
-    }
-
-    @Before
-    public void initialize() {
-        entityManager = getHostContext().get(EntityManager.class);
-        time = getHostContext().get(Time.class);
-    }
 
     @Test
     public void regenCancelTest() {
@@ -67,7 +48,7 @@ public class RegenTest extends ModuleTestingEnvironment {
         player.send(new DeactivateRegenEvent());
 
         float tick = time.getGameTime() + 1 + 0.100f;
-        runWhile(()-> time.getGameTime() <= tick);
+        helper.runWhile(()-> time.getGameTime() <= tick);
 
         assertEquals(90, player.getComponent(HealthComponent.class).currentHealth);
     }
@@ -92,7 +73,7 @@ public class RegenTest extends ModuleTestingEnvironment {
         assertEquals(7, system.getRegenValue(regen));
 
         float tick = time.getGameTime() + 6 + 0.200f;
-        runWhile(()-> time.getGameTime() <= tick);
+        helper.runWhile(()-> time.getGameTime() <= tick);
 
         regen = player.getComponent(RegenComponent.class);
         assertEquals(2, system.getRegenValue(regen));
@@ -114,7 +95,7 @@ public class RegenTest extends ModuleTestingEnvironment {
         assertEquals(healthComponent.currentHealth, 95);
 
         float tick = time.getGameTime() + 2 + 0.500f;
-        runWhile(()-> time.getGameTime() <= tick);
+        helper.runWhile(()-> time.getGameTime() <= tick);
 
         assertFalse(player.hasComponent(RegenComponent.class));
     }
