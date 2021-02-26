@@ -48,9 +48,8 @@ public class HealthClientSystem extends BaseComponentSystem {
     }
 
     @ReceiveEvent(components = PlayerCharacterComponent.class)
-    public void onDamaged(OnDamagedEvent event, EntityRef entity) {
+    public void onDamaged(OnDamagedEvent event, EntityRef entity, LocationComponent locationComponent, HealthComponent healthComponent) {
         // Show the relevant direction element
-        LocationComponent locationComponent = entity.getComponent(LocationComponent.class);
         EntityRef instigator = event.getInstigator();
         if (instigator != null && instigator.hasComponent(LocationComponent.class)) {
             switch (determineDamageDirection(instigator, locationComponent)) {
@@ -76,7 +75,6 @@ public class HealthClientSystem extends BaseComponentSystem {
         }
 
         // Is it major damage?
-        HealthComponent healthComponent = entity.getComponent(HealthComponent.class);
         int amount = event.getDamageAmount();
         int current = healthComponent.currentHealth;
         if (current > 0 && amount > 0) {
