@@ -11,7 +11,8 @@
                     "height": 115,
                     "position-horizontal-center": {},
                     "position-bottom": {
-                        "target": "BOTTOM"
+                        "target": "BOTTOM",
+                        "offset": -15
                     }
                 }
             },
@@ -23,7 +24,8 @@
                     "height": 115,
                     "position-horizontal-center": {},
                     "position-top": {
-                        "target": "TOP"
+                        "target": "TOP",
+                        "offset": -15
                     }
                 }
             },
