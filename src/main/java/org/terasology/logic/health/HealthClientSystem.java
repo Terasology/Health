@@ -35,7 +35,7 @@ import org.terasology.rendering.nui.layers.hud.MajorDamageOverlay;
 @RegisterSystem(RegisterMode.CLIENT)
 public class HealthClientSystem extends BaseComponentSystem {
 
-    private static final long DAMAGE_OVERLAY_DELAY_MS = 150L;
+    private static final long DAMAGE_OVERLAY_DELAY_MS = 500L;
     private static final String REMOVE_TOP_ACTION = "Health:RemoveTopHud";
     private static final String REMOVE_BOTTOM_ACTION = "Health:RemoveBottomHud";
     private static final String REMOVE_LEFT_ACTION = "Health:RemoveLeftHud";
@@ -66,19 +66,25 @@ public class HealthClientSystem extends BaseComponentSystem {
         LocationComponent locationComponent = entity.getComponent(LocationComponent.class);
         EntityRef instigator = event.getInstigator();
         if (instigator != null && instigator.hasComponent(LocationComponent.class)) {
-            double direction = determineDamageDirection(instigator, locationComponent);
-            if (direction <= 45.0 && direction > -45.0) {
-                damageDirection.setTop(true);
-                delayManager.addDelayedAction(entity, REMOVE_TOP_ACTION, DAMAGE_OVERLAY_DELAY_MS);
-            } else if (direction <= -45.0 && direction > -135.0) {
-                damageDirection.setRight(true);
-                delayManager.addDelayedAction(entity, REMOVE_RIGHT_ACTION, DAMAGE_OVERLAY_DELAY_MS);
-            } else if (direction <= 135.0 && direction > 45.0) {
-                damageDirection.setLeft(true);
-                delayManager.addDelayedAction(entity, REMOVE_LEFT_ACTION, DAMAGE_OVERLAY_DELAY_MS);
-            } else {
-                damageDirection.setBottom(true);
-                delayManager.addDelayedAction(entity, REMOVE_BOTTOM_ACTION, DAMAGE_OVERLAY_DELAY_MS);
+            switch (determineDamageDirection(instigator, locationComponent)) {
+                case RIGHT:
+                    damageDirection.setRight(true);
+                    delayManager.addDelayedAction(entity, REMOVE_RIGHT_ACTION, DAMAGE_OVERLAY_DELAY_MS);
+                    break;
+                case LEFT:
+                    damageDirection.setLeft(true);
+                    delayManager.addDelayedAction(entity, REMOVE_LEFT_ACTION, DAMAGE_OVERLAY_DELAY_MS);
+                    break;
+                case BACKWARD:
+                    damageDirection.setBottom(true);
+                    delayManager.addDelayedAction(entity, REMOVE_BOTTOM_ACTION, DAMAGE_OVERLAY_DELAY_MS);
+                    break;
+                case FORWARD:
+                    damageDirection.setTop(true);
+                    delayManager.addDelayedAction(entity, REMOVE_TOP_ACTION, DAMAGE_OVERLAY_DELAY_MS);
+                    break;
+                default:
+                    // do nothing
             }
         }
 
@@ -96,17 +102,26 @@ public class HealthClientSystem extends BaseComponentSystem {
         }
     }
 
-    private double determineDamageDirection(EntityRef instigator, LocationComponent locationComponent) {
+    private Direction determineDamageDirection(EntityRef instigator, LocationComponent locationComponent) {
         LocationComponent instigatorLocation = instigator.getComponent(LocationComponent.class);
-        Vector3f loc = new Vector3f();
-        loc = locationComponent.getWorldPosition(loc);
-		Vector3f locDiff = instigatorLocation.getWorldPosition(new Vector3f()).sub(loc).normalize();
+        Vector3f loc = locationComponent.getWorldPosition(new Vector3f());
+        Vector3f locDiff = instigatorLocation.getWorldPosition(new Vector3f()).sub(loc).normalize();
 
         // facing x and z are "how much" of that direction we are facing
         // e.g. (0.0, 1.0) means that going forward increases world z position without increasing x position
         Vector3f worldFacing = locationComponent.getWorldDirection(new Vector3f()).normalize();
 
-        return Math.toDegrees(worldFacing.angleSigned(locDiff, Direction.UP.asVector3f()));
+        double direction = org.joml.Math.toDegrees(worldFacing.angleSigned(locDiff, Direction.UP.asVector3f()));
+
+        if (direction <= 45.0 && direction > -45.0) {
+            return Direction.FORWARD;
+        } else if (direction <= -45.0 && direction > -135.0) {
+            return Direction.RIGHT;
+        } else if (direction <= 135.0 && direction > 45.0) {
+            return Direction.LEFT;
+        } else {
+            return Direction.BACKWARD;
+        }
     }
 
     @ReceiveEvent
