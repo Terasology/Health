@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.logic.health;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.joml.Vector3f;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.event.ReceiveEvent;
@@ -59,7 +60,8 @@ public class HealthClientSystem extends BaseComponentSystem {
         }
     }
 
-    private Direction determineDamageDirection(EntityRef instigator, LocationComponent locationComponent) {
+    @VisibleForTesting
+    Direction determineDamageDirection(EntityRef instigator, LocationComponent locationComponent) {
         LocationComponent instigatorLocation = instigator.getComponent(LocationComponent.class);
         Vector3f loc = locationComponent.getWorldPosition(new Vector3f());
         Vector3f locDiff = instigatorLocation.getWorldPosition(new Vector3f()).sub(loc).normalize();
