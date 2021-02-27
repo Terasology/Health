@@ -1,8 +1,0 @@
-{
-    "type": "MajorDamageOverlay",
-    "skin": "majorDamage",
-    "contents": {
-        "type": "relativeLayout",
-        "contents": []
-    }
-}

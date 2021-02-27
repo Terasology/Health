@@ -16,25 +16,22 @@ import org.terasology.math.Direction;
 import org.terasology.registry.In;
 import org.terasology.rendering.nui.NUIManager;
 import org.terasology.rendering.nui.layers.hud.DirectionalDamageOverlay;
-import org.terasology.rendering.nui.layers.hud.MajorDamageOverlay;
 
 @RegisterSystem(RegisterMode.CLIENT)
 public class HealthClientSystem extends BaseComponentSystem {
 
     private static final float DAMAGE_OVERLAY_DELAY_SECONDS = 0.5f;
-    private static final String DAMAGE_OVERLAY = "majorDamageOverlay";
-    private static final float DAMAGE_OVERLAY_REQUIRED_PERCENT = 0.25f;
 
     @In
     private NUIManager nuiManager;
 
-    private boolean overlayDisplaying;
     private DirectionalDamageOverlay directionalDamageOverlay;
 
     @Override
     public void initialise() {
         nuiManager.getHUD().addHUDElement("healthHud");
-        directionalDamageOverlay = (DirectionalDamageOverlay) nuiManager.getHUD().addHUDElement("directionalDamageOverlay");
+        directionalDamageOverlay = (DirectionalDamageOverlay) nuiManager.getHUD().addHUDElement(
+                "directionalDamageOverlay");
     }
 
     @ReceiveEvent(components = PlayerCharacterComponent.class)
@@ -46,17 +43,6 @@ public class HealthClientSystem extends BaseComponentSystem {
         if (instigator != null && instigator.hasComponent(LocationComponent.class)) {
             Direction direction = determineDamageDirection(instigator, locationComponent);
             directionalDamageOverlay.show(direction, DAMAGE_OVERLAY_DELAY_SECONDS);
-        }
-
-        // Is it major damage?
-        int amount = event.getDamageAmount();
-        int current = healthComponent.currentHealth;
-        if (current > 0 && amount > 0) {
-            float percent = (float) amount / current;
-            if (percent >= DAMAGE_OVERLAY_REQUIRED_PERCENT && !overlayDisplaying) {
-                overlayDisplaying = true;
-                nuiManager.addOverlay(DAMAGE_OVERLAY, MajorDamageOverlay.class);
-            }
         }
     }
 
