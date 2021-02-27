@@ -11,6 +11,7 @@ import org.terasology.registry.In;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class DirectionalDamageOverlay extends CoreHudWidget {
 
@@ -32,34 +33,43 @@ public class DirectionalDamageOverlay extends CoreHudWidget {
         right = find("damageRight", UIImage.class);
     }
 
-    private UIImage imageForDirection(Direction direction) {
+    private Optional<UIImage> imageForDirection(Direction direction) {
         switch (direction) {
-            case UP:
+
             case FORWARD:
-                return top;
+                return Optional.of(top);
             case RIGHT:
-                return right;
+                return Optional.of(right);
             case LEFT:
-                return left;
-            case DOWN:
+                return Optional.of(left);
             case BACKWARD:
-                return bottom;
+                return Optional.of(bottom);
+            case UP:
+            case DOWN:
             default:
-                throw new IllegalStateException();
+                return Optional.empty();
+
         }
     }
 
     @Override
     public void onDraw(Canvas canvas) {
         float currentTime = time.getGameTime();
+
+        // update state: update active indicators
+        activeIndicators.entrySet().removeIf(activeIndicator -> activeIndicator.getValue().end <= currentTime);
+
+        // render state: render active indicators
         for (Direction direction : Direction.values()) {
-            // update state: update active indicators
-            if (activeIndicators.containsKey(direction) && activeIndicators.get(direction).end <= currentTime) {
-                activeIndicators.remove(direction);
-            }
-            // render state: render active indicators
-            UIImage indicator = imageForDirection(direction);
-            indicator.setVisible(activeIndicators.containsKey(direction));
+            imageForDirection(direction).ifPresent(indicator -> {
+                boolean isActive = activeIndicators.containsKey(direction);
+                indicator.setVisible(isActive);
+
+                if (isActive) {
+                    TimingInformation timing = activeIndicators.get(direction);
+                    indicator.setTint(indicator.getTint().setAlpha(timing.lerp(currentTime)));
+                }
+            });
         }
         super.onDraw(canvas);
     }
