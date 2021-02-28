@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class BlockTest {
     private static final Vector3ic BLOCK_LOCATION = new Vector3i(0, 0, 0).add(0, -1, 0);
 
-    private static final float BUFFER = 0.2f; // 200 ms buffer time
+    private static final long BUFFER = 200; // 200 ms buffer time
 
     @In
     protected WorldProvider worldProvider;
@@ -75,15 +75,15 @@ public class BlockTest {
         testBlockEntity.send(new AttackEvent(testBlockEntity, testBlockEntity));
 
         // Make sure that the attack actually caused damage and started regen
+        helper.runUntil(BUFFER, () -> testBlockEntity.hasComponent(BlockDamagedComponent.class));
         assertTrue(testBlockEntity.hasComponent(BlockDamagedComponent.class));
 
         // Regen effects starts delayed after 1 second by default, so let's wait
-        helper.runWhile(() -> time.getGameTime() <= currentTime + 1.0f + BUFFER);
+        helper.runUntil(1000 + BUFFER, () -> testBlockEntity.hasComponent(RegenComponent.class));
         assertTrue(testBlockEntity.hasComponent(RegenComponent.class));
 
         // Time for regen is 1 sec, 0.2 sec for processing buffer time
-        float regenTime = time.getGameTime() + 1 + BUFFER;
-        helper.runWhile(() -> time.getGameTime() <= regenTime);
+        helper.runUntil(1000 + BUFFER, () -> !testBlockEntity.hasComponent(BlockDamagedComponent.class));
 
         // On regen, health is fully restored, and BlockDamagedComponent is removed from the block
         assertFalse(testBlockEntity.hasComponent(BlockDamagedComponent.class));
