@@ -54,36 +54,29 @@ public class BlockTest {
     protected ModuleTestingHelper helper;
 
 
-    private Block testBlock;
-    private EntityRef testBlockEntity;
-
-    @BeforeEach
-    public void setup() {
-
-        testBlock = blockManager.getBlock("health:test");
+    @Test
+    public void blockRegenTest() {
+        Block testBlock = blockManager.getBlock("health:test");
 
         helper.forceAndWaitForGeneration(BLOCK_LOCATION);
         worldProvider.setBlock(BLOCK_LOCATION, testBlock);
 
-        testBlockEntity = blockEntityRegistry.getExistingBlockEntityAt(BLOCK_LOCATION);
-    }
+        EntityRef testBlockEntity = blockEntityRegistry.getExistingBlockEntityAt(BLOCK_LOCATION);
 
-    @Test
-    public void blockRegenTest() {
         // Attack on block, damage of 1 inflicted
         float currentTime = time.getGameTime();
         testBlockEntity.send(new AttackEvent(testBlockEntity, testBlockEntity));
 
         // Make sure that the attack actually caused damage and started regen
-        helper.runUntil(BUFFER, () -> testBlockEntity.hasComponent(BlockDamagedComponent.class));
+        assertFalse(helper.runUntil(BUFFER, () -> testBlockEntity.hasComponent(BlockDamagedComponent.class)), "time out");
         assertTrue(testBlockEntity.hasComponent(BlockDamagedComponent.class));
 
         // Regen effects starts delayed after 1 second by default, so let's wait
-        helper.runUntil(1000 + BUFFER, () -> testBlockEntity.hasComponent(RegenComponent.class));
+        assertFalse(helper.runUntil(1000 + BUFFER, () -> testBlockEntity.hasComponent(RegenComponent.class)), "time out");
         assertTrue(testBlockEntity.hasComponent(RegenComponent.class));
 
         // Time for regen is 1 sec, 0.2 sec for processing buffer time
-        helper.runUntil(1000 + BUFFER, () -> !testBlockEntity.hasComponent(BlockDamagedComponent.class));
+        assertFalse(helper.runUntil(3000 + BUFFER, () -> !testBlockEntity.hasComponent(BlockDamagedComponent.class)), "time out");
 
         // On regen, health is fully restored, and BlockDamagedComponent is removed from the block
         assertFalse(testBlockEntity.hasComponent(BlockDamagedComponent.class));
