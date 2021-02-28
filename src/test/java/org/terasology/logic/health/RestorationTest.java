@@ -45,10 +45,10 @@ public class RestorationTest {
         final EntityRef player = newPlayer(0);
 
         player.send(new DoRestoreEvent(10));
-        assertEquals(player.getComponent(HealthComponent.class).currentHealth, 10);
+        assertEquals(10, player.getComponent(HealthComponent.class).currentHealth);
 
         player.send(new DoRestoreEvent(999));
-        assertEquals(player.getComponent(HealthComponent.class).currentHealth, 100);
+        assertEquals(100, player.getComponent(HealthComponent.class).currentHealth);
     }
 
     @Test
