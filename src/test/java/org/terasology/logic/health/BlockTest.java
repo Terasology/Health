@@ -40,6 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class BlockTest {
     private static final Vector3ic BLOCK_LOCATION = new Vector3i(0, 0, 0).add(0, -1, 0);
 
+    private static final float BUFFER = 0.2f; // 200 ms buffer time
+
     @In
     protected WorldProvider worldProvider;
     @In
@@ -59,31 +61,31 @@ public class BlockTest {
     public void setup() {
 
         testBlock = blockManager.getBlock("health:test");
-        forceAndSetBlock(BLOCK_LOCATION, testBlock);
+
+        helper.forceAndWaitForGeneration(BLOCK_LOCATION);
+        worldProvider.setBlock(BLOCK_LOCATION, testBlock);
 
         testBlockEntity = blockEntityRegistry.getExistingBlockEntityAt(BLOCK_LOCATION);
-    }
-
-    private void forceAndSetBlock(Vector3ic position, Block material) {
-        helper.forceAndWaitForGeneration(position);
-        worldProvider.setBlock(position, material);
     }
 
     @Test
     public void blockRegenTest() {
         // Attack on block, damage of 1 inflicted
+        float currentTime = time.getGameTime();
         testBlockEntity.send(new AttackEvent(testBlockEntity, testBlockEntity));
 
         // Make sure that the attack actually caused damage and started regen
         assertTrue(testBlockEntity.hasComponent(BlockDamagedComponent.class));
+
+        // Regen effects starts delayed after 1 second by default, so let's wait
+        helper.runWhile(() -> time.getGameTime() <= currentTime + 1.0f + BUFFER);
         assertTrue(testBlockEntity.hasComponent(RegenComponent.class));
 
         // Time for regen is 1 sec, 0.2 sec for processing buffer time
-        float regenTime = time.getGameTime() + 1 + 0.200f;
-        helper.runWhile(()-> time.getGameTime() <= regenTime);
+        float regenTime = time.getGameTime() + 1 + BUFFER;
+        helper.runWhile(() -> time.getGameTime() <= regenTime);
 
         // On regen, health is fully restored, and BlockDamagedComponent is removed from the block
         assertFalse(testBlockEntity.hasComponent(BlockDamagedComponent.class));
     }
-
 }
