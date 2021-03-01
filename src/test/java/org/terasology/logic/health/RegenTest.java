@@ -54,8 +54,12 @@ public class RegenTest {
         int currentHealth = player.getComponent(HealthComponent.class).currentHealth;
         assertTrue(currentHealth < 100, "regeneration should have been canceled before reaching max health");
 
-        float tick = time.getGameTime() + 1 + 0.100f;
-        helper.runWhile(()-> time.getGameTime() <= tick);
+        // wait until the delay for regen is passed, and the delayed action kicks in, adding the regen component back
+        helper.runUntil(() -> player.hasComponent(RegenComponent.class));
+        player.send(new DeactivateRegenEvent());
+
+        // wait for 2 seconds to give enough time that the regeneration could have kicked in
+        helper.runWhile(2000, () -> true);
 
         assertEquals(currentHealth, player.getComponent(HealthComponent.class).currentHealth);
     }
