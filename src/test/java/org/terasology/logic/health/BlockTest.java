@@ -18,6 +18,7 @@ package org.terasology.logic.health;
 import org.joml.Vector3i;
 import org.joml.Vector3ic;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.terasology.engine.Time;
@@ -54,7 +55,7 @@ public class BlockTest {
     protected ModuleTestingHelper helper;
 
 
-    @Test
+    @RepeatedTest(10)
     public void blockRegenTest() {
         Block testBlock = blockManager.getBlock("health:test");
 
