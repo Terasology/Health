@@ -20,6 +20,7 @@ package org.terasology.logic.health;
 import org.joml.Vector3i;
 import org.joml.Vector3ic;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.terasology.engine.core.Time;
@@ -39,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MTEExtension.class)
 @Dependencies({"Health"})
+@Tag("MteTest")
 @Disabled("The test has some weird timing issues which will sporadically fail it. (see #70)")
 public class BlockTest {
     private static final Vector3ic BLOCK_LOCATION = new Vector3i(0, 0, 0).add(0, -1, 0);

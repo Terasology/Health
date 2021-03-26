@@ -4,6 +4,7 @@
 package org.terasology.logic.health;
 
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.terasology.engine.core.Time;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MTEExtension.class)
 @Dependencies({"Health"})
+@Tag("MteTest")
 public class RegenTest {
 
     private static final float BUFFER = 0.2f; // 200 ms buffer time
