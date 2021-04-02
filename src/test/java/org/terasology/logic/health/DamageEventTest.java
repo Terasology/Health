@@ -16,6 +16,7 @@
 
 package org.terasology.logic.health;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MTEExtension.class)
 @Dependencies({"Health"})
+@Tag("MteTest")
 public class DamageEventTest {
     private static final Logger logger = LoggerFactory.getLogger(DamageEventTest.class);
 
