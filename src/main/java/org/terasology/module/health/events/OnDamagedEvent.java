@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.module.health.events;
 
+import com.google.common.base.Preconditions;
 import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.entitySystem.prefab.Prefab;
 import org.terasology.engine.network.OwnerEvent;
@@ -11,20 +12,16 @@ import org.terasology.engine.network.OwnerEvent;
  */
 @OwnerEvent
 public class OnDamagedEvent extends OnHealthChangedEvent {
-    private Prefab damageType;
-    private int fullAmount;
+    private final Prefab damageType;
 
-    public OnDamagedEvent() {
-    }
-
-    public OnDamagedEvent(int fullAmount, int change, Prefab damageType, EntityRef instigator) {
-        super(instigator, change);
-        this.fullAmount = fullAmount;
+    public OnDamagedEvent(int change, Prefab damageType, EntityRef instigator) {
+        super(-change, instigator);
+        Preconditions.checkArgument(change >= 0, "damage amount must be non-negative - use OnRestoredEvent instead");
         this.damageType = damageType;
     }
 
     public int getDamageAmount() {
-        return fullAmount;
+        return -change;
     }
 
     public Prefab getType() {

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.module.health.events;
 
+import com.google.common.base.Preconditions;
 import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.network.OwnerEvent;
 
@@ -10,21 +11,14 @@ import org.terasology.engine.network.OwnerEvent;
  */
 @OwnerEvent
 public class OnRestoredEvent extends OnHealthChangedEvent {
-    /**
-     * The amount by which the entity is restored.
-     */
-    private int amount;
-
-    public OnRestoredEvent() {
-    }
 
     public OnRestoredEvent(int amount, EntityRef instigator) {
-        super(instigator, amount);
-        this.amount = amount;
+        super(amount, instigator);
+        Preconditions.checkArgument(amount >= 0, "restoration amount must be non-negative - use OnDamagedEvent instead");
     }
 
-    public int getRegenAmount() {
-        return amount;
+    public int getRestorationAmount() {
+        return change;
     }
 
 }

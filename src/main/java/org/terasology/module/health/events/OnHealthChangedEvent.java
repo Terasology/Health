@@ -11,14 +11,14 @@ import org.terasology.engine.entitySystem.event.Event;
  *
  */
 public class OnHealthChangedEvent implements Event {
-    private EntityRef instigator;
-    private int change;
+    protected EntityRef instigator;
+    protected int change;
 
-    public OnHealthChangedEvent() {
-        instigator = EntityRef.NULL;
+    public OnHealthChangedEvent(int change) {
+        this(change, EntityRef.NULL);
     }
 
-    public OnHealthChangedEvent(EntityRef instigator, int change) {
+    public OnHealthChangedEvent(int change, EntityRef instigator) {
         this.instigator = instigator;
         this.change = change;
     }
