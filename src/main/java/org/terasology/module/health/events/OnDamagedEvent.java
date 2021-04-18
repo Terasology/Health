@@ -10,7 +10,7 @@ import org.terasology.engine.network.OwnerEvent;
  * This event is sent after damage has been dealt to an entity.
  */
 @OwnerEvent
-public class OnDamagedEvent extends HealthChangedEvent {
+public class OnDamagedEvent extends OnHealthChangedEvent {
     private Prefab damageType;
     private int fullAmount;
 

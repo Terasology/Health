@@ -10,15 +10,15 @@ import org.terasology.engine.entitySystem.event.Event;
  * This event (or a subtype) is sent whenever health changes
  *
  */
-public class HealthChangedEvent implements Event {
+public class OnHealthChangedEvent implements Event {
     private EntityRef instigator;
     private int change;
 
-    public HealthChangedEvent() {
+    public OnHealthChangedEvent() {
         instigator = EntityRef.NULL;
     }
 
-    public HealthChangedEvent(EntityRef instigator, int change) {
+    public OnHealthChangedEvent(EntityRef instigator, int change) {
         this.instigator = instigator;
         this.change = change;
     }

@@ -9,7 +9,7 @@ import org.terasology.engine.network.OwnerEvent;
  * This event is sent after the entity is restored. Final event of restoration logic.
  */
 @OwnerEvent
-public class OnRestoredEvent extends HealthChangedEvent {
+public class OnRestoredEvent extends OnHealthChangedEvent {
     /**
      * The amount by which the entity is restored.
      */
