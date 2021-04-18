@@ -111,7 +111,7 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
             int cappedDamage = Math.min(health.currentHealth, damageAmount);
             health.currentHealth -= cappedDamage;
             entity.saveComponent(health);
-            entity.send(new OnDamagedEvent(damageAmount, cappedDamage, damageType, instigator));
+            entity.send(new OnDamagedEvent(cappedDamage, damageType, instigator));
             if (health.currentHealth == 0 && health.destroyEntityOnNoHealth) {
                 entity.send(new DestroyEvent(instigator, directCause, damageType));
             } else {
