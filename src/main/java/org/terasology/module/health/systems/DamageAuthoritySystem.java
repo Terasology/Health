@@ -160,7 +160,7 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
         BeforeDamagedEvent beforeDamage = entity.send(new BeforeDamagedEvent(amount, damageType, instigator,
                 directCause));
         if (!beforeDamage.isConsumed()) {
-            int damageAmount = TeraMath.floorToInt(beforeDamage.getResultValue());
+            int damageAmount = TeraMath.floorToInt(beforeDamage.getResultValueWithoutCapping());
             if (damageAmount > 0) {
                 doDamage(entity, damageAmount, damageType, instigator, directCause);
             } else {
