@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MTEExtension.class)
-@Dependencies({"Health"})
+@Dependencies("Health")
 @Tag("MteTest")
 public class DamageEventTest {
     private static final Logger logger = LoggerFactory.getLogger(DamageEventTest.class);
@@ -38,16 +38,20 @@ public class DamageEventTest {
     @In
     protected ModuleTestingHelper helper;
 
-
-    @Test
-    public void damageTest() {
+    private EntityRef newPlayer(int currentHealth) {
         HealthComponent healthComponent = new HealthComponent();
-        healthComponent.currentHealth = 50;
+        healthComponent.currentHealth = currentHealth;
         healthComponent.maxHealth = 100;
 
         final EntityRef player = entityManager.create();
         player.addComponent(new PlayerCharacterComponent());
         player.addComponent(healthComponent);
+        return player;
+    }
+
+    @Test
+    public void damageTest() {
+        final EntityRef player = newPlayer(50);
 
         player.send(new DoDamageEvent(10));
         assertEquals(player.getComponent(HealthComponent.class).currentHealth, 40);
@@ -63,13 +67,7 @@ public class DamageEventTest {
         List<BeforeDamagedEvent> list = receiver.getEvents();
         assertTrue(list.isEmpty());
 
-        HealthComponent healthComponent = new HealthComponent();
-        healthComponent.currentHealth = 50;
-        healthComponent.maxHealth = 100;
-
-        final EntityRef player = entityManager.create();
-        player.addComponent(new PlayerCharacterComponent());
-        player.addComponent(healthComponent);
+        final EntityRef player = newPlayer(50);
 
         player.send(new DoDamageEvent(10));
         assertEquals(1, list.size());
@@ -77,13 +75,7 @@ public class DamageEventTest {
 
     @Test
     public void damageModifyEventTest() {
-        HealthComponent healthComponent = new HealthComponent();
-        healthComponent.currentHealth = 50;
-        healthComponent.maxHealth = 100;
-
-        final EntityRef player = entityManager.create();
-        player.addComponent(new PlayerCharacterComponent());
-        player.addComponent(healthComponent);
+        final EntityRef player = newPlayer(50);
 
         EntityRef dummyInstigator = entityManager.create();
 
@@ -104,13 +96,7 @@ public class DamageEventTest {
 
     @Test
     public void negativeDamageModifyEventTest() {
-        HealthComponent healthComponent = new HealthComponent();
-        healthComponent.currentHealth = 50;
-        healthComponent.maxHealth = 100;
-
-        final EntityRef player = entityManager.create();
-        player.addComponent(new PlayerCharacterComponent());
-        player.addComponent(healthComponent);
+        final EntityRef player = newPlayer(50);
 
         EntityRef dummyInstigator = entityManager.create();
 
@@ -134,13 +120,7 @@ public class DamageEventTest {
 
     @Test
     public void damageEventCancelTest() {
-        HealthComponent healthComponent = new HealthComponent();
-        healthComponent.currentHealth = 50;
-        healthComponent.maxHealth = 100;
-
-        final EntityRef player = entityManager.create();
-        player.addComponent(new PlayerCharacterComponent());
-        player.addComponent(healthComponent);
+        final EntityRef player = newPlayer(50);
 
         TestEventReceiver<BeforeDamagedEvent> receiver = new TestEventReceiver<>(helper.getHostContext(),
                 BeforeDamagedEvent.class,
