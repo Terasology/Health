@@ -17,14 +17,17 @@ import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
 import org.terasology.engine.entitySystem.systems.UpdateSubscriberSystem;
+import org.terasology.engine.registry.In;
+import org.terasology.math.TeraMath;
 import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.components.RegenComponent;
 import org.terasology.module.health.events.ActivateRegenEvent;
+import org.terasology.module.health.events.BeforeRegenEvent;
 import org.terasology.module.health.events.DeactivateRegenEvent;
 import org.terasology.module.health.events.OnFullyHealedEvent;
-import org.terasology.math.TeraMath;
-import org.terasology.engine.registry.In;
+import org.terasology.naming.Name;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -78,6 +81,7 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
             nextTick = currentTime + CHECK_INTERVAL;
         }
     }
+
 
     /**
      * @param currentWorldTime the current in-game time in ms
@@ -144,6 +148,33 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
         for (EntityRef entity : regenToBeRemoved.keySet()) {
             regenSortedByTime.remove(regenToBeRemoved.get(entity), entity);
         }
+    }
+
+    /**
+     * Send out a {@link BeforeRegenEvent} collector event to ask systems for collaboration on determining the
+     * regeneration value.
+     *
+     * @param id the regeneration id to collect the current amount for
+     * @param entity the entity the regeneration action affects
+     * @return the collector event after event processing
+     */
+    private BeforeRegenEvent collectRegenValueFor(Name id, EntityRef entity) {
+        BeforeRegenEvent beforeRegenEvent = new BeforeRegenEvent(id, 0);
+        entity.send(beforeRegenEvent);
+        return beforeRegenEvent;
+    }
+
+    private void collectAndApplyRegenFor(EntityRef entity, float delta) {
+        // find out which regens to ask for -> do later
+        List<Name> registeredRegenIds = new ArrayList<>();
+        // send out asks
+        Float collectedRegenValue = registeredRegenIds.stream()
+                .map(id -> collectRegenValueFor(id, entity))
+                .filter(event -> !event.isConsumed())
+                .reduce(0f, (accumulator, event) -> accumulator + event.getResultValue(), Float::sum);
+        // process responses
+        int regenAmount = Math.round(collectedRegenValue * delta);
+        RestorationAuthoritySystem.restore(entity, entity.getComponent(HealthComponent.class), regenAmount);
     }
 
     private void removeCompleted(Long currentTime, RegenComponent regen) {

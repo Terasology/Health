@@ -40,17 +40,22 @@ public class RestorationAuthoritySystem extends BaseComponentSystem {
         }
         BeforeRestoreEvent beforeRestoreEvent = entity.send(new BeforeRestoreEvent(event.getAmount(), entity));
         if (!beforeRestoreEvent.isConsumed()) {
+            //TODO: it is probably better to cap the value at 0, and recommend systems who want to inflict damage on
+            // restoration to send out a DoDamageEvent instead.
             int modifiedRestoreAmount = TeraMath.floorToInt(beforeRestoreEvent.getResultValueWithoutCapping());
             if (modifiedRestoreAmount > 0) {
                 restore(entity, health, modifiedRestoreAmount);
             } else {
                 // Cause "healing" damage to entity if modified value of restoration is negative
+                //TODO: don't send out DoDamageEvent as this will trigger another round of collector event(s)
                 entity.send(new DoDamageEvent(-modifiedRestoreAmount, EngineDamageTypes.HEALING.get()));
             }
         }
     }
 
-    private void restore(EntityRef entity, HealthComponent health, int restoreAmount) {
+    //TODO: this is common functionality used for both restoration and regeneration.
+    // Should probably live in a different place?
+    static void restore(EntityRef entity, HealthComponent health, int restoreAmount) {
         int cappedHealth = Math.min(health.maxHealth, health.currentHealth + restoreAmount);
         int cappedRestoreAmount = cappedHealth - health.currentHealth;
         health.currentHealth = cappedHealth;
