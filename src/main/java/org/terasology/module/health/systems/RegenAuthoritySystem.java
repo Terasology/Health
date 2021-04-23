@@ -27,12 +27,13 @@ import org.terasology.module.health.events.DeactivateRegenEvent;
 import org.terasology.module.health.events.OnFullyHealedEvent;
 import org.terasology.naming.Name;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This system handles the natural regeneration of entities with HealthComponent.
@@ -164,17 +165,35 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
         return beforeRegenEvent;
     }
 
-    private void collectAndApplyRegenFor(EntityRef entity, float delta) {
-        // find out which regens to ask for -> do later
-        List<Name> registeredRegenIds = new ArrayList<>();
-        // send out asks
+    /**
+     * Send out <i>collector events</i> for all registered regeneration ids and apply the resulting amount to the
+     * entity's health component.
+     * <p>
+     * The final amount is adjusted by the time {@code delta}.
+     *
+     * <pre>
+     *     δ × ∑ max(BeforeRegenValue(id), 0) ∀ registered id
+     * </pre>
+     *
+     * @param entity the entity targeted by the regeneration action
+     * @param health the entity's health component
+     * @param regen the entity's regen component tracking registered regeneration ids
+     * @param delta the time delta to adjust the regeneration amount for
+     */
+    private void collectAndApplyRegenFor(EntityRef entity, HealthComponent health, RegenComponent regen, float delta) {
+        // retrieve the set of registered regeneration ids for the given entity
+        Set<Name> registeredRegenIds =
+                regen.regenEndTime.values().stream()
+                        .map(Name::new) //TODO: store registered ids as Name
+                        .collect(Collectors.toSet());
+        // send out a collector event for each of the registered ids, filter out consumed ids, and sum up capped result
         Float collectedRegenValue = registeredRegenIds.stream()
                 .map(id -> collectRegenValueFor(id, entity))
                 .filter(event -> !event.isConsumed())
                 .reduce(0f, (accumulator, event) -> accumulator + event.getResultValue(), Float::sum);
-        // process responses
+        // compute the time-adjusted regeneration amount and update the entity's health component
         int regenAmount = Math.round(collectedRegenValue * delta);
-        RestorationAuthoritySystem.restore(entity, entity.getComponent(HealthComponent.class), regenAmount);
+        RestorationAuthoritySystem.restore(entity, health, regenAmount);
     }
 
     private void removeCompleted(Long currentTime, RegenComponent regen) {
