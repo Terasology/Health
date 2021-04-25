@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.module.health.events;
 
+import com.google.common.base.Preconditions;
 import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.entitySystem.event.Event;
 
@@ -19,6 +20,7 @@ public class DoRestoreEvent implements Event {
     }
 
     public DoRestoreEvent(int amount, EntityRef entity) {
+        Preconditions.checkArgument(amount >= 0, "restoration amount must be non-negative - use DoDamageEvent instead");
         this.amount = amount;
         this.instigator = entity;
     }

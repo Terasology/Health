@@ -4,7 +4,9 @@
 package org.terasology.module.health.events;
 
 import org.terasology.engine.entitySystem.event.Event;
+import org.terasology.engine.network.OwnerEvent;
 
+@OwnerEvent
 public class MaxHealthChangedEvent implements Event {
     private final int newValue;
     private final int oldValue;

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.module.health.events;
 
+import com.google.common.base.Preconditions;
 import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.entitySystem.event.Event;
 import org.terasology.engine.entitySystem.prefab.Prefab;
@@ -36,6 +37,7 @@ public class DoDamageEvent implements Event {
      * @param directCause       Tool used to cause the damage
      */
     public DoDamageEvent(int amount, Prefab damageType, EntityRef instigator, EntityRef directCause) {
+        Preconditions.checkArgument(amount >= 0, "damage amount must be non-negative - use DoRestorationEvent instead");
         this.amount = amount;
         this.damageType = damageType;
         this.instigator = instigator;
