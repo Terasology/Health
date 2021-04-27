@@ -9,14 +9,16 @@ import org.terasology.engine.entitySystem.event.ReceiveEvent;
 import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
-import org.terasology.module.health.components.HealthComponent;
-import org.terasology.module.health.events.OnDamagedEvent;
 import org.terasology.engine.logic.location.LocationComponent;
 import org.terasology.engine.logic.players.PlayerCharacterComponent;
 import org.terasology.engine.math.Direction;
 import org.terasology.engine.registry.In;
 import org.terasology.engine.rendering.nui.NUIManager;
+import org.terasology.module.health.components.HealthComponent;
+import org.terasology.module.health.events.MaxHealthChangedEvent;
+import org.terasology.module.health.events.OnDamagedEvent;
 import org.terasology.module.health.ui.DirectionalDamageOverlay;
+import org.terasology.nui.widgets.UIIconBar;
 
 @RegisterSystem(RegisterMode.CLIENT)
 public class HealthClientSystem extends BaseComponentSystem {
@@ -47,10 +49,20 @@ public class HealthClientSystem extends BaseComponentSystem {
             directionalDamageOverlay.show(direction, DAMAGE_OVERLAY_DELAY_SECONDS);
         } else {
             // Show non-directional damage indication by making all four indicators visible
-            for (Direction direction: Direction.values()) {
+            for (Direction direction : Direction.values()) {
                 directionalDamageOverlay.show(direction, DAMAGE_OVERLAY_DELAY_SECONDS);
             }
         }
+    }
+
+    /**
+     * Reacts to the {@link MaxHealthChangedEvent} notification event. Is responsible for the change in maximum number
+     * of icons in the Health Bar UI.
+     */
+    @ReceiveEvent
+    public void onMaxHealthChanged(MaxHealthChangedEvent event, EntityRef player) {
+        UIIconBar healthBar = nuiManager.getHUD().find("healthBar", UIIconBar.class);
+        healthBar.setMaxIcons(event.getNewValue() / 10);
     }
 
     @VisibleForTesting

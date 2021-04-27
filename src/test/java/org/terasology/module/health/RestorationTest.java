@@ -20,6 +20,7 @@ import org.terasology.moduletestingenvironment.extension.Dependencies;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MTEExtension.class)
@@ -98,11 +99,7 @@ public class RestorationTest {
 
     @Test
     public void restorationNegativeTest() {
-        final EntityRef player = newPlayer(50);
-
-        player.send(new DoRestoreEvent(-10));
-        // No healing happens when base restoration amount is negative, with no negative multipliers.
-        assertEquals(50, player.getComponent(HealthComponent.class).currentHealth);
+        assertThrows(IllegalArgumentException.class, () -> new DoRestoreEvent(-10));
     }
 
     @Test
@@ -114,11 +111,11 @@ public class RestorationTest {
                 (event, entity) -> {
                     event.multiply(-2);
                 })) {
-            // Expected restoration value is ( initial:10 ) * (-2) == (-20)
-            // As AbstractValueModifiableEvent#getResultValue guarantees that the resulting value is non-negative, this
-            // is actually canceled out to be 0...
             player.send(new DoRestoreEvent(10));
         }
-        assertEquals(50, player.getComponent(HealthComponent.class).currentHealth);
+        // Expected restoration value is ( initial:10 ) * (-2) == (-20)
+        // The authority system handles both cases of positive and negative restoration, and sends out an OnRestoredEvent
+        // or OnDamagedEvent, respectively. Therefore, the expected value is (initial: 50) - 20 = 30
+        assertEquals(30, player.getComponent(HealthComponent.class).currentHealth);
     }
 }

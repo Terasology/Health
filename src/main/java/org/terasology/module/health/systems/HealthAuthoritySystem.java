@@ -11,18 +11,14 @@ import org.terasology.engine.entitySystem.prefab.PrefabManager;
 import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
+import org.terasology.engine.registry.In;
 import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.events.ChangeMaxHealthEvent;
 import org.terasology.module.health.events.DoDamageEvent;
 import org.terasology.module.health.events.MaxHealthChangedEvent;
-import org.terasology.nui.widgets.UIIconBar;
-import org.terasology.engine.registry.In;
-import org.terasology.engine.rendering.nui.NUIManager;
 
 @RegisterSystem(value = RegisterMode.AUTHORITY)
 public class HealthAuthoritySystem extends BaseComponentSystem {
-    @In
-    NUIManager nuiManager;
     @In
     PrefabManager prefabManager;
 
@@ -38,17 +34,5 @@ public class HealthAuthoritySystem extends BaseComponentSystem {
                 maxHealthReductionDamagePrefab));
         player.send(new MaxHealthChangedEvent(oldMaxHealth, health.maxHealth));
         player.saveComponent(health);
-    }
-
-    /**
-     * Reacts to the {@link MaxHealthChangedEvent} notification event. Is responsible for the change in maximum number
-     * of icons in the Health Bar UI.
-     */
-    @ReceiveEvent
-    public void onMaxHealthChanged(MaxHealthChangedEvent event, EntityRef player) {
-        //TODO: as this is updating UI, I think this should not be in an AUTHORITY system...
-        //      this potentially requires the event to be distributed to the client (owner)
-        UIIconBar healthBar = nuiManager.getHUD().find("healthBar", UIIconBar.class);
-        healthBar.setMaxIcons(event.getNewValue() / 10);
     }
 }

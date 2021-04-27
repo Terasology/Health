@@ -40,7 +40,7 @@ public class RestorationAuthoritySystem extends BaseComponentSystem {
         }
         BeforeRestoreEvent beforeRestoreEvent = entity.send(new BeforeRestoreEvent(event.getAmount(), entity));
         if (!beforeRestoreEvent.isConsumed()) {
-            int modifiedRestoreAmount = TeraMath.floorToInt(beforeRestoreEvent.getResultValue());
+            int modifiedRestoreAmount = TeraMath.floorToInt(beforeRestoreEvent.getResultValueWithoutCapping());
             if (modifiedRestoreAmount > 0) {
                 restore(entity, health, modifiedRestoreAmount);
             } else {
@@ -63,16 +63,15 @@ public class RestorationAuthoritySystem extends BaseComponentSystem {
 
     @ReceiveEvent
     public void onRestoreFullHealthEvent(RestoreFullHealthEvent event, EntityRef entity, HealthComponent health) {
-        restoreFullHealth(entity, health);
+        health.currentHealth = health.maxHealth;
+        entity.saveComponent(health);
     }
 
+    //TODO: this is no logic that belongs to the API offering of this module, but a default implementation/feature.
+    //      move this to a separate system to separate concerns.
     @ReceiveEvent
     public void onRespawn(OnPlayerRespawnedEvent event, EntityRef entity, HealthComponent healthComponent) {
-        restoreFullHealth(entity, healthComponent);
+        entity.send(new RestoreFullHealthEvent(entity));
     }
 
-    private void restoreFullHealth(EntityRef entity, HealthComponent healthComponent) {
-        healthComponent.currentHealth = healthComponent.maxHealth;
-        entity.saveComponent(healthComponent);
-    }
 }

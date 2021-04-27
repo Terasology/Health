@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terasology.engine.entitySystem.entity.EntityManager;
 import org.terasology.engine.entitySystem.entity.EntityRef;
+import org.terasology.engine.logic.health.EngineDamageTypes;
 import org.terasology.engine.logic.players.PlayerCharacterComponent;
 import org.terasology.engine.registry.In;
 import org.terasology.module.health.components.HealthComponent;
@@ -23,10 +24,11 @@ import org.terasology.moduletestingenvironment.extension.Dependencies;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MTEExtension.class)
-@Dependencies({"Health"})
+@Dependencies("Health")
 @Tag("MteTest")
 public class DamageEventTest {
     private static final Logger logger = LoggerFactory.getLogger(DamageEventTest.class);
@@ -36,16 +38,20 @@ public class DamageEventTest {
     @In
     protected ModuleTestingHelper helper;
 
-
-    @Test
-    public void damageTest() {
+    private EntityRef newPlayer(int currentHealth) {
         HealthComponent healthComponent = new HealthComponent();
-        healthComponent.currentHealth = 50;
+        healthComponent.currentHealth = currentHealth;
         healthComponent.maxHealth = 100;
 
         final EntityRef player = entityManager.create();
         player.addComponent(new PlayerCharacterComponent());
         player.addComponent(healthComponent);
+        return player;
+    }
+
+    @Test
+    public void damageTest() {
+        final EntityRef player = newPlayer(50);
 
         player.send(new DoDamageEvent(10));
         assertEquals(player.getComponent(HealthComponent.class).currentHealth, 40);
@@ -56,17 +62,12 @@ public class DamageEventTest {
 
     @Test
     public void damageEventSentTest() {
-        TestEventReceiver<BeforeDamagedEvent> receiver = new TestEventReceiver<>(helper.getHostContext(), BeforeDamagedEvent.class);
+        TestEventReceiver<BeforeDamagedEvent> receiver = new TestEventReceiver<>(helper.getHostContext(),
+                BeforeDamagedEvent.class);
         List<BeforeDamagedEvent> list = receiver.getEvents();
         assertTrue(list.isEmpty());
 
-        HealthComponent healthComponent = new HealthComponent();
-        healthComponent.currentHealth = 50;
-        healthComponent.maxHealth = 100;
-
-        final EntityRef player = entityManager.create();
-        player.addComponent(new PlayerCharacterComponent());
-        player.addComponent(healthComponent);
+        final EntityRef player = newPlayer(50);
 
         player.send(new DoDamageEvent(10));
         assertEquals(1, list.size());
@@ -74,35 +75,52 @@ public class DamageEventTest {
 
     @Test
     public void damageModifyEventTest() {
-        HealthComponent healthComponent = new HealthComponent();
-        healthComponent.currentHealth = 50;
-        healthComponent.maxHealth = 100;
+        final EntityRef player = newPlayer(50);
 
-        final EntityRef player = entityManager.create();
-        player.addComponent(new PlayerCharacterComponent());
-        player.addComponent(healthComponent);
+        EntityRef dummyInstigator = entityManager.create();
 
         TestEventReceiver<BeforeDamagedEvent> receiver = new TestEventReceiver<>(helper.getHostContext(),
                 BeforeDamagedEvent.class,
                 (event, entity) -> {
-                    event.add(5);
-                    event.multiply(2);
+                    if (event.getInstigator().equals(dummyInstigator)) {
+                        event.add(5);
+                        event.multiply(2);
+                    }
                 });
+        DoDamageEvent damageEvent = new DoDamageEvent(10, EngineDamageTypes.DIRECT.get(), dummyInstigator);
+        player.send(damageEvent);
         // Expected damage value is ( initial:10 + 5 ) * 2 = 30
         // Expected health value is ( 50 - 30 ) == 20
-        player.send(new DoDamageEvent(10));
         assertEquals(20, player.getComponent(HealthComponent.class).currentHealth);
     }
 
     @Test
-    public void damageEventCancelTest() {
-        HealthComponent healthComponent = new HealthComponent();
-        healthComponent.currentHealth = 50;
-        healthComponent.maxHealth = 100;
+    public void negativeDamageModifyEventTest() {
+        final EntityRef player = newPlayer(50);
 
-        final EntityRef player = entityManager.create();
-        player.addComponent(new PlayerCharacterComponent());
-        player.addComponent(healthComponent);
+        EntityRef dummyInstigator = entityManager.create();
+
+
+        TestEventReceiver<BeforeDamagedEvent> receiver = new TestEventReceiver<>(helper.getHostContext(),
+                BeforeDamagedEvent.class,
+                (event, entity) -> {
+                    if (event.getInstigator().equals(dummyInstigator)) {
+                        event.add(5);
+                        event.multiply(-2);
+                    }
+                });
+
+        DoDamageEvent damageEvent = new DoDamageEvent(10, EngineDamageTypes.DIRECT.get(), dummyInstigator);
+        player.send(damageEvent);
+
+        // Expected damage value is ( initial:10 + 5 ) * -2 = -30
+        // Expected health value is ( 50 - (-30) ) == 80
+        assertEquals(80, player.getComponent(HealthComponent.class).currentHealth);
+    }
+
+    @Test
+    public void damageEventCancelTest() {
+        final EntityRef player = newPlayer(50);
 
         TestEventReceiver<BeforeDamagedEvent> receiver = new TestEventReceiver<>(helper.getHostContext(),
                 BeforeDamagedEvent.class,
@@ -115,18 +133,7 @@ public class DamageEventTest {
 
     @Test
     public void damageNegativeTest() {
-        HealthComponent healthComponent = new HealthComponent();
-        healthComponent.currentHealth = 50;
-        healthComponent.maxHealth = 100;
-
-        final EntityRef player = entityManager.create();
-        player.addComponent(new PlayerCharacterComponent());
-        player.addComponent(healthComponent);
-
-        player.send(new DoDamageEvent(-10));
-
-        // Negative base value are ignored by Damage system
-        assertEquals(50, player.getComponent(HealthComponent.class).currentHealth);
+        assertThrows(IllegalArgumentException.class, () -> new DoDamageEvent(-10));
     }
 
 }
