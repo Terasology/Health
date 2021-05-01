@@ -36,10 +36,14 @@ import org.terasology.engine.world.block.sounds.BlockSounds;
 import org.terasology.engine.world.block.tiles.WorldAtlas;
 import org.terasology.module.health.components.BlockDamagedComponent;
 import org.terasology.module.health.components.HealthComponent;
+import org.terasology.module.health.components.RegenComponent;
+import org.terasology.module.health.core.BaseRegenComponent;
+import org.terasology.module.health.core.BaseRegenAuthoritySystem;
 import org.terasology.module.health.events.BeforeDamagedEvent;
 import org.terasology.module.health.events.OnDamagedEvent;
 import org.terasology.module.health.events.OnFullyHealedEvent;
 import org.terasology.math.TeraMath;
+import org.terasology.module.health.time.Instant;
 
 import java.util.Arrays;
 import java.util.List;
@@ -233,20 +237,38 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
         }
     }
 
-    /** Adds health component to blocks when damaged. */
+    /**
+     * Adds health component to blocks when damaged.
+     */
     @ReceiveEvent
-    public void beforeDamagedEnsureHealthPresent(BeforeDamagedEvent event, EntityRef blockEntity, BlockComponent blockComponent) {
-        if (!blockEntity.hasComponent(HealthComponent.class)) {
-            Block type = blockComponent.getBlock();
-            if (type.isDestructible()) {
+    public void beforeDamagedEnsureHealthPresent(BeforeDamagedEvent event, EntityRef blockEntity,
+                                                 BlockComponent blockComponent) {
+        Block type = blockComponent.getBlock();
+        if (type.isDestructible()) {
+
+            if (!blockEntity.hasComponent(HealthComponent.class)) {
                 HealthComponent healthComponent = new HealthComponent();
                 healthComponent.maxHealth = type.getHardness();
                 healthComponent.currentHealth = type.getHardness();
                 healthComponent.destroyEntityOnNoHealth = true;
-                healthComponent.regenRate = type.getHardness() / BLOCK_REGEN_SECONDS;
-                healthComponent.waitBeforeRegen = 1f;
 
                 blockEntity.addComponent(healthComponent);
+            }
+
+            if (!blockEntity.hasComponent(BaseRegenComponent.class)) {
+                BaseRegenComponent baseRegenComponent = new BaseRegenComponent();
+                baseRegenComponent.regenRate = type.getHardness() / BLOCK_REGEN_SECONDS;
+                baseRegenComponent.waitBeforeRegen = 1f;
+
+                blockEntity.addComponent(baseRegenComponent);
+            }
+
+            if (!blockEntity.hasComponent(RegenComponent.class)) {
+                //TODO: should this just send a registration event instead of creating the component on it's own?
+                RegenComponent regenComponent = new RegenComponent();
+                regenComponent.actions.put(BaseRegenAuthoritySystem.BASE_REGEN, Instant.NEVER);
+
+                blockEntity.addComponent(regenComponent);
             }
         }
     }
