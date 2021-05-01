@@ -20,6 +20,8 @@ import org.terasology.engine.registry.Share;
 import org.terasology.engine.utilities.Assets;
 import org.terasology.module.health.components.DamageResistComponent;
 import org.terasology.module.health.components.HealthComponent;
+import org.terasology.module.health.core.BaseRegenComponent;
+import org.terasology.module.health.events.ActivateRegenEvent;
 import org.terasology.module.health.events.DoDamageEvent;
 import org.terasology.module.health.events.DoRestoreEvent;
 
@@ -155,21 +157,24 @@ public class HealthCommands extends BaseComponentSystem {
             requiredPermission = PermissionManager.CHEAT_PERMISSION)
     public String setRegenRate(@Sender EntityRef client, @CommandParam("rate") float rate) {
         ClientComponent clientComp = client.getComponent(ClientComponent.class);
-        HealthComponent health = clientComp.character.getComponent(HealthComponent.class);
-        float oldRegenRate = health.regenRate;
-        if (health != null) {
-            health.regenRate = rate;
-            clientComp.character.saveComponent(health);
+        BaseRegenComponent baseRegen = clientComp.character.getComponent(BaseRegenComponent.class);
+
+        if (baseRegen != null) {
+            float oldRegenRate = baseRegen.regenRate;
+            baseRegen.regenRate = rate;
+            clientComp.character.saveComponent(baseRegen);
+            return "Health regeneration changed from " + oldRegenRate + " to " + rate;
         }
-        return "Health regeneration changed from " + oldRegenRate + " to " + rate;
+        return "FAILED no base regen component on entity " + clientComp.character;
     }
 
     @Command(shortDescription = "Show your health", requiredPermission = PermissionManager.NO_PERMISSION)
     public String showHealth(@Sender EntityRef client) {
         ClientComponent clientComp = client.getComponent(ClientComponent.class);
         HealthComponent health = clientComp.character.getComponent(HealthComponent.class);
+        BaseRegenComponent baseRegen = clientComp.character.getComponent(BaseRegenComponent.class);
         if (health != null) {
-            return "Your health:" + health.currentHealth + " max:" + health.maxHealth + " regen:" + health.regenRate;
+            return "Your health:" + health.currentHealth + " max:" + health.maxHealth + " regen:" + baseRegen.regenRate;
         }
         return "I guess you're dead?";
     }
