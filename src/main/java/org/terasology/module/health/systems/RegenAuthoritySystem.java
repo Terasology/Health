@@ -83,12 +83,37 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
         }
     }
 
-
     /**
      * @param currentWorldTime the current in-game time in ms
      */
     private void invokeRegenOperations(long currentWorldTime) {
         // Contains all the entities with current time crossing EndTime
+        // Updates regenSortedByTime in-place by removing ended actions
+        List<EntityRef> entitiesWithExpiringRegenActions = getEntitiesWithExpiringRegenIds(currentWorldTime);
+
+        // Add new regen if present, or remove RegenComponent
+        entitiesWithExpiringRegenActions.stream()
+                .filter(EntityRef::exists)
+                .filter(entityRef -> entityRef.hasComponent(RegenComponent.class))
+                .forEach(regenEntity -> {
+                    RegenComponent regen = regenEntity.getComponent(RegenComponent.class);
+                    regenSortedByTime.remove(regen.soonestEndTime, regenEntity);
+                    //TODO: Add a flag to indicate the regeneration id should be removed as soon as the entity is restored to full health?
+                    //      On the other hand, a system can react to the OnFullyHealedEvent and unregister the regeneration id if desired.
+                    removeCompleted(currentWorldTime, regen);
+                    if (regen.regenValue.isEmpty()) {
+                        regenEntity.removeComponent(RegenComponent.class);
+                    } else {
+                        regenEntity.saveComponent(regen);
+                        regenSortedByTime.put(findSoonestEndTime(regen), regenEntity);
+                    }
+                });
+
+        // Regenerate the entities with EndTime greater than Current time
+        regenerate(currentWorldTime);
+    }
+
+    private List<EntityRef> getEntitiesWithExpiringRegenIds(long currentWorldTime) {
         List<EntityRef> entitiesWithExpiringRegenActions = new LinkedList<>();
         Iterator<Long> regenTimeIterator = regenSortedByTime.keySet().iterator();
         long endTime;
@@ -103,25 +128,7 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
             entitiesWithExpiringRegenActions.addAll(regenSortedByTime.get(endTime));
             regenTimeIterator.remove();
         }
-
-        // Add new regen if present, or remove RegenComponent
-        entitiesWithExpiringRegenActions.stream()
-                .filter(EntityRef::exists)
-                .filter(entityRef -> entityRef.hasComponent(RegenComponent.class))
-                .forEach(regenEntity -> {
-                    RegenComponent regen = regenEntity.getComponent(RegenComponent.class);
-                    regenSortedByTime.remove(regen.soonestEndTime, regenEntity);
-                    removeCompleted(currentWorldTime, regen);
-                    if (regen.regenValue.isEmpty()) {
-                        regenEntity.removeComponent(RegenComponent.class);
-                    } else {
-                        regenEntity.saveComponent(regen);
-                        regenSortedByTime.put(findSoonestEndTime(regen), regenEntity);
-                    }
-                });
-
-        // Regenerate the entities with EndTime greater than Current time
-        regenerate(currentWorldTime);
+        return entitiesWithExpiringRegenActions;
     }
 
     private void regenerate(long currentTime) {
