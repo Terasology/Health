@@ -6,11 +6,6 @@ import org.terasology.engine.entitySystem.event.Event;
 
 import static org.terasology.module.health.systems.RegenAuthoritySystem.BASE_REGEN;
 
-/**
- * @deprecated Regeneration is going to be a continuous action that cannot be deactivated. The individual regeneration
- * of hit points can be cancelled by intercepting the respective {@link BeforeRegenEvent}.
- */
-@Deprecated
 public class DeactivateRegenEvent implements Event {
     public String id;
 

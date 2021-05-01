@@ -4,28 +4,24 @@ package org.terasology.module.health.events;
 
 import org.terasology.engine.entitySystem.event.Event;
 import org.terasology.module.health.components.HealthComponent;
-import org.terasology.module.health.components.RegenComponent;
 import org.terasology.module.health.systems.RegenAuthoritySystem;
+import org.terasology.module.health.components.RegenComponent;
 
 import static org.terasology.module.health.systems.RegenAuthoritySystem.BASE_REGEN;
 
 /**
  * Send this event to active regeneration of health points for an entity.
  * <p>
- * The targeted entity must have a {@link HealthComponent} for this event to have an effect.
+ * The targeted entity must have a {@link HealthComponent} for this event to have an
+ * effect.
  * <p>
- * The {@link RegenAuthoritySystem} manages regeneration effects and updates affected components every "tick". A tick
- * currently occurs once per second.
+ * The {@link RegenAuthoritySystem} manages regeneration effects and updates affected
+ * components every "tick". A tick currently occurs once per second.
  *
  * @see RegenAuthoritySystem
  * @see RegenComponent
  * @see HealthComponent
- * @deprecated Regeneration should not be activated with a value and duration with the Health systems. Instead,
- *         regeneration types should be registered with {@link RegisterRegenEvent}, and a dedicated system should
- *         contribute the respective value or modification to the {@link BeforeRegenEvent} <i>collector</i>
- *         event.
  */
-@Deprecated
 public class ActivateRegenEvent implements Event {
     /**
      * Identifier for the cause of this regeneration effect activation.
