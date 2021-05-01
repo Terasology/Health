@@ -8,5 +8,9 @@
     "destroyEntityOnNoHealth": true,
     "regenRate": 3,
     "waitBeforeRegen": 10
+  },
+  "BaseRegen": {
+    "regenRate": 3,
+    "waitBeforeRegen": 10
   }
 }
