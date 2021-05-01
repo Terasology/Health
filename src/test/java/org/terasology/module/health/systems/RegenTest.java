@@ -3,7 +3,6 @@
 
 package org.terasology.module.health.systems;
 
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,10 +13,11 @@ import org.terasology.engine.logic.players.PlayerCharacterComponent;
 import org.terasology.engine.registry.In;
 import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.components.RegenComponent;
+import org.terasology.module.health.core.BaseRegenAuthoritySystem;
+import org.terasology.module.health.core.BaseRegenComponent;
 import org.terasology.module.health.events.ActivateRegenEvent;
 import org.terasology.module.health.events.DeactivateRegenEvent;
 import org.terasology.module.health.events.DoDamageEvent;
-import org.terasology.module.health.systems.RegenAuthoritySystem;
 import org.terasology.moduletestingenvironment.MTEExtension;
 import org.terasology.moduletestingenvironment.ModuleTestingHelper;
 import org.terasology.moduletestingenvironment.extension.Dependencies;
@@ -44,12 +44,17 @@ public class RegenTest {
         HealthComponent healthComponent = new HealthComponent();
         healthComponent.currentHealth = currentHealth;
         healthComponent.maxHealth = 100;
-        healthComponent.waitBeforeRegen = 1;
-        healthComponent.regenRate = regenRate;
+
+        BaseRegenComponent baseRegenComponent = new BaseRegenComponent();
+        baseRegenComponent.waitBeforeRegen = 1;
+        baseRegenComponent.regenRate = regenRate;
 
         final EntityRef player = entityManager.create();
         player.addComponent(new PlayerCharacterComponent());
         player.addComponent(healthComponent);
+        player.addComponent(baseRegenComponent);
+
+        player.send(new ActivateRegenEvent(BaseRegenAuthoritySystem.BASE_REGEN.toString(), -20, -1));
 
         return player;
     }
@@ -65,38 +70,16 @@ public class RegenTest {
         player.send(new DoDamageEvent(20));
 
         // Deactivate base regen
-        player.send(new DeactivateRegenEvent());
+        player.send(new DeactivateRegenEvent(BaseRegenAuthoritySystem.BASE_REGEN.toString()));
         // there may have been some regeneration between the damage event and the deactivation
         // Thus, we compare against the current health which should be less than the max health.
         int currentHealth = player.getComponent(HealthComponent.class).currentHealth;
         assertTrue(currentHealth < 100, "regeneration should have been canceled before reaching max health");
 
-        // wait until the delay for regen is passed, and the delayed action kicks in, adding the regen component back
-        helper.runUntil(() -> player.hasComponent(RegenComponent.class));
-        player.send(new DeactivateRegenEvent());
-
         // wait for 2 seconds to give enough time that the regeneration could have kicked in
         helper.runWhile(2000, () -> true);
 
         assertEquals(currentHealth, player.getComponent(HealthComponent.class).currentHealth);
-    }
-
-    @Test
-    public void multipleRegenTest() {
-        EntityRef player = createNewPlayer(10);
-
-        player.send(new ActivateRegenEvent("Potion#1", 5, 5));
-        player.send(new ActivateRegenEvent("Potion#2", 2, 10));
-
-        RegenComponent regen = player.getComponent(RegenComponent.class);
-        RegenAuthoritySystem system = new RegenAuthoritySystem();
-        assertEquals(7, system.getRegenValue(regen));
-
-        float tick = time.getGameTime() + 6 + 0.200f;
-        helper.runWhile(() -> time.getGameTime() <= tick);
-
-        regen = player.getComponent(RegenComponent.class);
-        assertEquals(2, system.getRegenValue(regen));
     }
 
     @Test
@@ -109,7 +92,8 @@ public class RegenTest {
         float tick = time.getGameTime() + 2 + 0.500f;
         helper.runWhile(() -> time.getGameTime() <= tick);
 
-        assertFalse(player.hasComponent(RegenComponent.class));
+        assertEquals(95, player.getComponent(HealthComponent.class).currentHealth,
+                "entity should not have been recovered.");
     }
 
     @Test
