@@ -18,6 +18,7 @@ import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
 import org.terasology.engine.entitySystem.systems.UpdateSubscriberSystem;
 import org.terasology.engine.registry.In;
+import org.terasology.gestalt.naming.Name;
 import org.terasology.math.TeraMath;
 import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.components.RegenComponent;
@@ -25,7 +26,6 @@ import org.terasology.module.health.events.ActivateRegenEvent;
 import org.terasology.module.health.events.BeforeRegenEvent;
 import org.terasology.module.health.events.DeactivateRegenEvent;
 import org.terasology.module.health.events.OnFullyHealedEvent;
-import org.terasology.naming.Name;
 
 import java.util.HashMap;
 import java.util.Iterator;

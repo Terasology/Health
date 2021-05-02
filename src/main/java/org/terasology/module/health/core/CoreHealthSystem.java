@@ -7,9 +7,9 @@ import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.entitySystem.event.ReceiveEvent;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
+import org.terasology.gestalt.naming.Name;
 import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.events.BeforeRegenEvent;
-import org.terasology.naming.Name;
 
 /**
  * A system adding core functionality and default behavior based on the mechanics defined in this module.

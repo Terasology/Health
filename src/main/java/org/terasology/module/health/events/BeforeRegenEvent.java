@@ -4,7 +4,7 @@
 package org.terasology.module.health.events;
 
 import org.terasology.engine.entitySystem.event.AbstractConsumableValueModifiableEvent;
-import org.terasology.naming.Name;
+import org.terasology.gestalt.naming.Name;
 
 /**
  * A <i>collector event</i> to allow interested systems to contribute to a regeneration action.
