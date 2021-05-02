@@ -7,7 +7,7 @@ import org.terasology.engine.network.Replicate;
 import org.terasology.module.health.events.ActivateRegenEvent;
 import org.terasology.module.health.events.DeactivateRegenEvent;
 import org.terasology.module.health.time.Instant;
-import org.terasology.naming.Name;
+import org.terasology.gestalt.naming.Name;
 
 import java.util.HashMap;
 import java.util.Map;
