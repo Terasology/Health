@@ -5,17 +5,10 @@
     "excessSpeedDamageMultiplier": 5,
     "fallingDamageSpeedThreshold": 18,
     "horizontalDamageSpeedThreshold": 50,
-    "destroyEntityOnNoHealth": true,
-    "regenRate": 3,
-    "waitBeforeRegen": 10
+    "destroyEntityOnNoHealth": true
   },
   "BaseRegen": {
     "regenRate": 3,
     "waitBeforeRegen": 10
-  },
-  "Regen": {
-    "actions": [
-      { "key":  "health:baseRegen", "value": -1 }
-    ]
   }
 }

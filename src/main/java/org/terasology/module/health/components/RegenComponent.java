@@ -4,10 +4,10 @@ package org.terasology.module.health.components;
 
 import org.terasology.engine.entitySystem.Component;
 import org.terasology.engine.network.Replicate;
+import org.terasology.gestalt.naming.Name;
 import org.terasology.module.health.events.ActivateRegenEvent;
 import org.terasology.module.health.events.DeactivateRegenEvent;
 import org.terasology.module.health.time.Instant;
-import org.terasology.gestalt.naming.Name;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,14 +20,20 @@ import java.util.Map;
  * registered actions with the respective id. To denote an indefinite timestamp, i.e., a never ending action, use a
  * negative value (usually {@code -1}).
  * <p>
- * For instance, to pre-register the base regeneration with id {@code health:baseRegen} include the following in your
- * prefab:
+ * It is recommended to format regeneration ids as follows:
+ * <pre>{@code
+ *  <module>:<cause>Regen
+ * }</pre>
+ * Append a unique suffix in case multiple regeneration actions with the same cause should be registered.
+ * <p>
+ * To pre-register an indefinite regeneration specified in the "gooey" module and caused by magic, for instance, include
+ * the following in your prefab:
  *
  * <pre>
  * {
  *   "Regen": {
  *     "actions": [
- *       { "key": "health:baseRegen", "value": -1 }
+ *       { "key": "gooey:magicRegen", "value": -1 }
  *     ]
  *   }
  * }

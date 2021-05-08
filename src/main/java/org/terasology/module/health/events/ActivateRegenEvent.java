@@ -3,6 +3,7 @@
 package org.terasology.module.health.events;
 
 import org.terasology.engine.entitySystem.event.Event;
+import org.terasology.gestalt.naming.Name;
 import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.systems.RegenAuthoritySystem;
 import org.terasology.module.health.components.RegenComponent;
@@ -45,6 +46,11 @@ public class ActivateRegenEvent implements Event {
     public ActivateRegenEvent(float value) {
         this.value = value;
         this.id = BASE_REGEN;
+        this.durationInSeconds = -1;
+    }
+
+    public ActivateRegenEvent(Name id) {
+        this.id = id.toString();
         this.durationInSeconds = -1;
     }
 
