@@ -3,6 +3,7 @@
 package org.terasology.module.health.events;
 
 import org.terasology.engine.entitySystem.event.Event;
+import org.terasology.gestalt.naming.Name;
 import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.systems.RegenAuthoritySystem;
 import org.terasology.module.health.components.RegenComponent;
@@ -26,7 +27,7 @@ public class ActivateRegenEvent implements Event {
     /**
      * Identifier for the cause of this regeneration effect activation.
      */
-    public String id;
+    public final String id;
     /**
      * Amount of additional health points per tick.
      */
@@ -34,7 +35,7 @@ public class ActivateRegenEvent implements Event {
     /**
      * Effect duration in seconds.
      */
-    public float endTime;
+    public float durationInSeconds;
 
     /**
      * Active base regeneration for the target entity.
@@ -45,7 +46,12 @@ public class ActivateRegenEvent implements Event {
     public ActivateRegenEvent(float value) {
         this.value = value;
         this.id = BASE_REGEN;
-        this.endTime = -1;
+        this.durationInSeconds = -1;
+    }
+
+    public ActivateRegenEvent(Name id) {
+        this.id = id.toString();
+        this.durationInSeconds = -1;
     }
 
     /**
@@ -70,11 +76,11 @@ public class ActivateRegenEvent implements Event {
      *
      * @param id identifier for the cause of this effect
      * @param value additional health generation amount per tick
-     * @param endTime the effect duration in seconds
+     * @param durationInSeconds the effect duration in seconds
      */
-    public ActivateRegenEvent(String id, float value, float endTime) {
+    public ActivateRegenEvent(String id, float value, float durationInSeconds) {
         this.id = id;
         this.value = value;
-        this.endTime = endTime;
+        this.durationInSeconds = durationInSeconds;
     }
 }

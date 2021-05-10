@@ -22,24 +22,20 @@ import org.terasology.engine.logic.characters.MovementMode;
 import org.terasology.engine.logic.characters.events.AttackEvent;
 import org.terasology.engine.logic.characters.events.HorizontalCollisionEvent;
 import org.terasology.engine.logic.characters.events.VerticalCollisionEvent;
-import org.terasology.engine.logic.delay.DelayManager;
-import org.terasology.engine.logic.delay.DelayedActionTriggeredEvent;
 import org.terasology.engine.logic.health.DestroyEvent;
 import org.terasology.engine.logic.health.EngineDamageTypes;
-import org.terasology.module.health.components.DamageResistComponent;
-import org.terasology.module.health.components.HealthComponent;
-import org.terasology.module.health.events.ActivateRegenEvent;
-import org.terasology.module.health.events.BeforeDamagedEvent;
-import org.terasology.module.health.components.DamageSoundComponent;
-import org.terasology.module.health.events.DeactivateRegenEvent;
-import org.terasology.module.health.events.DoDamageEvent;
-import org.terasology.module.health.events.DoRestoreEvent;
-import org.terasology.module.health.events.OnDamagedEvent;
 import org.terasology.engine.logic.inventory.ItemComponent;
-import org.terasology.math.TeraMath;
 import org.terasology.engine.registry.In;
 import org.terasology.engine.utilities.random.FastRandom;
 import org.terasology.engine.utilities.random.Random;
+import org.terasology.math.TeraMath;
+import org.terasology.module.health.components.DamageResistComponent;
+import org.terasology.module.health.components.DamageSoundComponent;
+import org.terasology.module.health.components.HealthComponent;
+import org.terasology.module.health.events.BeforeDamagedEvent;
+import org.terasology.module.health.events.DoDamageEvent;
+import org.terasology.module.health.events.DoRestoreEvent;
+import org.terasology.module.health.events.OnDamagedEvent;
 
 /**
  * This system reacts to OnDamageEvent events and lowers health on the HealthComponent, and handles
@@ -59,13 +55,8 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
 
     private static final Logger logger = LoggerFactory.getLogger(DamageAuthoritySystem.class);
 
-    private static final String DELAYED_REGEN_ACTIVATION = "DamageAuthoritySystem:activateRegenEvent";
-
     @In
     private Time time;
-
-    @In
-    private DelayManager delayManager;
 
     private Random random = new FastRandom();
 
@@ -114,29 +105,7 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
             entity.send(new OnDamagedEvent(cappedDamage, damageType, instigator));
             if (health.currentHealth == 0 && health.destroyEntityOnNoHealth) {
                 entity.send(new DestroyEvent(instigator, directCause, damageType));
-            } else {
-                scheduleRegenEvent(entity, health.waitBeforeRegen);
             }
-        }
-    }
-
-    private void scheduleRegenEvent(EntityRef entity, float delayInSeconds) {
-        // deactivate base regen because entity was damaged
-        entity.send(new DeactivateRegenEvent());
-        // reset timer for activating the base regen on the entity
-        if (delayManager.hasDelayedAction(entity, DELAYED_REGEN_ACTIVATION)) {
-            logger.debug("Canceling previous delayed regen event");
-            delayManager.cancelDelayedAction(entity, DELAYED_REGEN_ACTIVATION);
-        }
-        long delayInMs = Math.round(delayInSeconds * 1000);
-        logger.debug("Scheduling delayed regen event with delay '{}'", delayInMs);
-        delayManager.addDelayedAction(entity, DELAYED_REGEN_ACTIVATION, delayInMs);
-    }
-
-    @ReceiveEvent
-    public void onDelayedRegenActivation(DelayedActionTriggeredEvent event, EntityRef entity, HealthComponent health) {
-        if (event.getActionId().equals(DELAYED_REGEN_ACTIVATION)) {
-            entity.send(new ActivateRegenEvent(health.regenRate));
         }
     }
 
