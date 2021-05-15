@@ -54,8 +54,6 @@ public class RegenTest {
         player.addComponent(healthComponent);
         player.addComponent(baseRegenComponent);
 
-        player.send(new RegisterRegenEvent(BaseRegenAuthoritySystem.BASE_REGEN.toString(), -20, -1));
-
         return player;
     }
 

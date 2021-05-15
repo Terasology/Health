@@ -212,17 +212,4 @@ public class HealthCommands extends BaseComponentSystem {
         return "Normal collision damage values restored";
     }
 
-    @Command(shortDescription = "Register a regeneration action", runOnServer = true,
-            requiredPermission = PermissionManager.CHEAT_PERMISSION)
-    public String addRegen(@Sender EntityRef client,
-                           @CommandParam("id") String id,
-                           @CommandParam(value = "duration (in seconds)", required = false) Float duration) {
-
-        ClientComponent clientComp = client.getComponent(ClientComponent.class);
-
-        float durationInSeconds = (duration != null) ? duration : 5f;
-        clientComp.character.send(new RegisterRegenEvent(id, 10, durationInSeconds));
-        return "Added regen action '" + id + "' with a duration of " + durationInSeconds + " seconds";
-    }
-
 }

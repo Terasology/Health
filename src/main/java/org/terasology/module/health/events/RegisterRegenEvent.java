@@ -29,10 +29,6 @@ public class RegisterRegenEvent implements Event {
      */
     public final String id;
     /**
-     * Amount of additional health points per tick.
-     */
-    public float value;
-    /**
      * Effect duration in seconds.
      */
     public float durationInSeconds;
@@ -43,8 +39,7 @@ public class RegisterRegenEvent implements Event {
      * Base regeneration (or "natural regeneration") is active until the entity is back at full health. The regeneration
      * value is typically derived from {@link HealthComponent#regenRate}.
      */
-    public RegisterRegenEvent(float value) {
-        this.value = value;
+    public RegisterRegenEvent() {
         this.id = BASE_REGEN;
         this.durationInSeconds = -1;
     }
@@ -60,9 +55,6 @@ public class RegisterRegenEvent implements Event {
      * The {@code id} is intended to uniquely identify the reason for this regeneration effect. For instance, it can
      * denote that regeneration was trigger by a potion, caused by a spell, or any other condition.
      * <p>
-     * The {@code value} denotes the additional amount of health points regenerated with each regeneration tick while
-     * this effect is active.
-     * <p>
      * The {@code endTime} denotes after how many seconds the regeneration effect phases out. Once the time span is
      * passed the effect will be removed from the entity.
      * <p>
@@ -75,12 +67,10 @@ public class RegisterRegenEvent implements Event {
      * </pre>
      *
      * @param id identifier for the cause of this effect
-     * @param value additional health generation amount per tick
      * @param durationInSeconds the effect duration in seconds
      */
-    public RegisterRegenEvent(String id, float value, float durationInSeconds) {
+    public RegisterRegenEvent(String id, float durationInSeconds) {
         this.id = id;
-        this.value = value;
         this.durationInSeconds = durationInSeconds;
     }
 }
