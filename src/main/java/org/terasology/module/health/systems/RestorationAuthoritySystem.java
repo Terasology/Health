@@ -8,6 +8,8 @@ import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
 import org.terasology.engine.logic.health.EngineDamageTypes;
+import org.terasology.engine.logic.players.event.OnPlayerRespawnedEvent;
+import org.terasology.math.TeraMath;
 import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.events.BeforeRestoreEvent;
 import org.terasology.module.health.events.DoDamageEvent;
@@ -15,8 +17,6 @@ import org.terasology.module.health.events.DoRestoreEvent;
 import org.terasology.module.health.events.OnFullyHealedEvent;
 import org.terasology.module.health.events.OnRestoredEvent;
 import org.terasology.module.health.events.RestoreFullHealthEvent;
-import org.terasology.engine.logic.players.event.OnPlayerRespawnedEvent;
-import org.terasology.math.TeraMath;
 
 /**
  * This system takes care of restoration of entities with HealthComponent.
@@ -38,7 +38,7 @@ public class RestorationAuthoritySystem extends BaseComponentSystem {
         if (event.getAmount() == 0) {
             return;
         }
-        BeforeRestoreEvent beforeRestoreEvent = entity.send(new BeforeRestoreEvent(event.getAmount(), entity));
+        BeforeRestoreEvent beforeRestoreEvent = entity.send(new BeforeRestoreEvent(event.getAmount()));
         if (!beforeRestoreEvent.isConsumed()) {
             //TODO: it is probably better to cap the value at 0, and recommend systems who want to inflict damage on
             // restoration to send out a DoDamageEvent instead.
