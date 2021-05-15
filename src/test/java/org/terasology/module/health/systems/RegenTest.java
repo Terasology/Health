@@ -68,7 +68,7 @@ public class RegenTest {
         player.send(new DoDamageEvent(20));
 
         // Deactivate base regen
-        player.send(new DeregisterRegenEvent(BaseRegenAuthoritySystem.BASE_REGEN.toString()));
+        player.send(new DeregisterRegenEvent(BaseRegenAuthoritySystem.BASE_REGEN));
         // there may have been some regeneration between the damage event and the deactivation
         // Thus, we compare against the current health which should be less than the max health.
         int currentHealth = player.getComponent(HealthComponent.class).currentHealth;

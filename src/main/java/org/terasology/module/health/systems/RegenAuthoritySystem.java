@@ -116,7 +116,7 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
         //TODO: the event should directly hold the id as Name
         Name id = new Name(event.id);
         Instant currentTime = Instant.fromMillis(time.getGameTimeInMs());
-        Duration duration = Duration.fromSeconds(event.durationInSeconds);
+        Duration duration = Duration.fromSeconds(event.duration);
         Instant endTime = currentTime.plus(duration);
 
         entity.upsertComponent(RegenComponent.class, regenComponent -> {

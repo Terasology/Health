@@ -5,10 +5,9 @@ package org.terasology.module.health.events;
 import org.terasology.engine.entitySystem.event.Event;
 import org.terasology.gestalt.naming.Name;
 import org.terasology.module.health.components.HealthComponent;
-import org.terasology.module.health.systems.RegenAuthoritySystem;
 import org.terasology.module.health.components.RegenComponent;
-
-import static org.terasology.module.health.systems.RegenAuthoritySystem.BASE_REGEN;
+import org.terasology.module.health.systems.RegenAuthoritySystem;
+import org.terasology.module.health.time.Duration;
 
 /**
  * Send this event to active regeneration of health points for an entity.
@@ -27,11 +26,11 @@ public class RegisterRegenEvent implements Event {
     /**
      * Identifier for the cause of this regeneration effect activation.
      */
-    public final String id;
+    public final Name id;
     /**
      * Effect duration in seconds.
      */
-    public float durationInSeconds;
+    public Duration duration;
 
     /**
      * Active base regeneration for the target entity.
@@ -39,14 +38,8 @@ public class RegisterRegenEvent implements Event {
      * Base regeneration (or "natural regeneration") is active until the entity is back at full health. The regeneration
      * value is typically derived from {@link HealthComponent#regenRate}.
      */
-    public RegisterRegenEvent() {
-        this.id = BASE_REGEN;
-        this.durationInSeconds = -1;
-    }
-
     public RegisterRegenEvent(Name id) {
-        this.id = id.toString();
-        this.durationInSeconds = -1;
+        this(id, Duration.INFINITE);
     }
 
     /**
@@ -69,8 +62,8 @@ public class RegisterRegenEvent implements Event {
      * @param id identifier for the cause of this effect
      * @param durationInSeconds the effect duration in seconds
      */
-    public RegisterRegenEvent(String id, float durationInSeconds) {
+    public RegisterRegenEvent(Name id, Duration duration) {
         this.id = id;
-        this.durationInSeconds = durationInSeconds;
+        this.duration = duration;
     }
 }
