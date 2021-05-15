@@ -14,6 +14,13 @@ import org.terasology.engine.network.OwnerEvent;
 public class OnDamagedEvent extends OnHealthChangedEvent {
     private final Prefab damageType;
 
+    /**
+     * INTERNAL: Only required for internal replication of network events
+     */
+    OnDamagedEvent() {
+        this(0, null, EntityRef.NULL);
+    }
+
     public OnDamagedEvent(int change, Prefab damageType, EntityRef instigator) {
         super(-change, instigator);
         Preconditions.checkArgument(change >= 0, "damage amount must be non-negative - use OnRestoredEvent instead");

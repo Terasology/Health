@@ -11,10 +11,17 @@ import org.terasology.engine.network.OwnerEvent;
  */
 @OwnerEvent
 public class OnRestoredEvent extends OnHealthChangedEvent {
+    /**
+     * INTERNAL: Only required for internal replication of network events
+     */
+    OnRestoredEvent() {
+        this(0, EntityRef.NULL);
+    }
 
     public OnRestoredEvent(int amount, EntityRef instigator) {
         super(amount, instigator);
-        Preconditions.checkArgument(amount >= 0, "restoration amount must be non-negative - use OnDamagedEvent instead");
+        Preconditions.checkArgument(amount >= 0, "restoration amount must be non-negative - use OnDamagedEvent " +
+                "instead");
     }
 
     public int getRestorationAmount() {
