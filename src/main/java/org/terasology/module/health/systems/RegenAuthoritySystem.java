@@ -113,24 +113,19 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
 
     @ReceiveEvent(components = HealthComponent.class)
     public void onRegenActivated(RegisterRegenEvent event, EntityRef entity) {
-        //TODO: the event should directly hold the id as Name
-        Name id = new Name(event.id);
         Instant currentTime = Instant.fromMillis(time.getGameTimeInMs());
-        Duration duration = Duration.fromSeconds(event.duration);
-        Instant endTime = currentTime.plus(duration);
+        Instant endTime = currentTime.plus(event.duration);
 
         entity.upsertComponent(RegenComponent.class, regenComponent -> {
             RegenComponent regen = regenComponent.orElse(new RegenComponent());
-            regen.actions.merge(id, endTime, Instant::max);
+            regen.actions.merge(event.id, endTime, Instant::max);
             return regen;
         });
     }
 
     @ReceiveEvent
     public void onRegenDeactivated(DeregisterRegenEvent event, EntityRef entity, RegenComponent regen) {
-        //TODO: the event should directly hold the id as Name
-        Name id = new Name(event.id);
-        regen.actions.remove(id);
+        regen.actions.remove(event.id);
 
         if (regen.actions.isEmpty()) {
             entity.removeComponent(RegenComponent.class);
