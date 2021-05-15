@@ -14,9 +14,9 @@ import org.terasology.engine.registry.In;
 import org.terasology.gestalt.naming.Name;
 import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.components.RegenComponent;
-import org.terasology.module.health.events.ActivateRegenEvent;
+import org.terasology.module.health.events.RegisterRegenEvent;
 import org.terasology.module.health.events.BeforeRegenEvent;
-import org.terasology.module.health.events.DeactivateRegenEvent;
+import org.terasology.module.health.events.DeregisterRegenEvent;
 import org.terasology.module.health.time.Duration;
 import org.terasology.module.health.time.Instant;
 
@@ -112,25 +112,20 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
     }
 
     @ReceiveEvent(components = HealthComponent.class)
-    public void onRegenActivated(ActivateRegenEvent event, EntityRef entity) {
-        //TODO: the event should directly hold the id as Name
-        Name id = new Name(event.id);
+    public void onRegenActivated(RegisterRegenEvent event, EntityRef entity) {
         Instant currentTime = Instant.fromMillis(time.getGameTimeInMs());
-        Duration duration = Duration.fromSeconds(event.durationInSeconds);
-        Instant endTime = currentTime.plus(duration);
+        Instant endTime = currentTime.plus(event.duration);
 
         entity.upsertComponent(RegenComponent.class, regenComponent -> {
             RegenComponent regen = regenComponent.orElse(new RegenComponent());
-            regen.actions.merge(id, endTime, Instant::max);
+            regen.actions.merge(event.id, endTime, Instant::max);
             return regen;
         });
     }
 
     @ReceiveEvent
-    public void onRegenDeactivated(DeactivateRegenEvent event, EntityRef entity, RegenComponent regen) {
-        //TODO: the event should directly hold the id as Name
-        Name id = new Name(event.id);
-        regen.actions.remove(id);
+    public void onRegenDeactivated(DeregisterRegenEvent event, EntityRef entity, RegenComponent regen) {
+        regen.actions.remove(event.id);
 
         if (regen.actions.isEmpty()) {
             entity.removeComponent(RegenComponent.class);

@@ -7,12 +7,13 @@ import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.entitySystem.event.Event;
 
 /**
- * The event sent to restore health to entity. Starting point of Restoration cycle.
+ * A <i>trigger event</i> to restore health to an entity. This event is the starting point of a {@link
+ * org.terasology.module.health.systems.RestorationAuthoritySystem Restoration Event Flow}.
+ * <p>
+ * To inflict damage, send a {@link DoDamageEvent} instead.
  */
 public class DoRestoreEvent implements Event {
-    /** The amount of health points being restored. */
     private int amount;
-    /** The entity that caused the restoration */
     private EntityRef instigator;
 
     public DoRestoreEvent(int amount) {
@@ -25,10 +26,16 @@ public class DoRestoreEvent implements Event {
         this.instigator = entity;
     }
 
+    /**
+     * The amount of health points to be restored.
+     */
     public int getAmount() {
         return amount;
     }
 
+    /**
+     * The entity that caused the restoration effect.
+     */
     public EntityRef getInstigator() {
         return instigator;
     }

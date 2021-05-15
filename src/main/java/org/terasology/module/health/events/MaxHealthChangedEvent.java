@@ -12,6 +12,13 @@ public class MaxHealthChangedEvent implements Event {
     private final int oldValue;
 
     /**
+     * INTERNAL: Only required for internal replication of network events
+     */
+    MaxHealthChangedEvent() {
+        this(0, 0);
+    }
+
+    /**
      * Create a new notification event on character maxHealth scaling.
      *
      * @param oldValue the entity's old maxHealth.

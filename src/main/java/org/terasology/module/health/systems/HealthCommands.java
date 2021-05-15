@@ -21,7 +21,7 @@ import org.terasology.engine.utilities.Assets;
 import org.terasology.module.health.components.DamageResistComponent;
 import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.core.BaseRegenComponent;
-import org.terasology.module.health.events.ActivateRegenEvent;
+import org.terasology.module.health.events.RegisterRegenEvent;
 import org.terasology.module.health.events.DoDamageEvent;
 import org.terasology.module.health.events.DoRestoreEvent;
 
@@ -210,19 +210,6 @@ public class HealthCommands extends BaseComponentSystem {
             clientComp.character.saveComponent(health);
         }
         return "Normal collision damage values restored";
-    }
-
-    @Command(shortDescription = "Register a regeneration action", runOnServer = true,
-            requiredPermission = PermissionManager.CHEAT_PERMISSION)
-    public String addRegen(@Sender EntityRef client,
-                           @CommandParam("id") String id,
-                           @CommandParam(value = "duration (in seconds)", required = false) Float duration) {
-
-        ClientComponent clientComp = client.getComponent(ClientComponent.class);
-
-        float durationInSeconds = (duration != null) ? duration : 5f;
-        clientComp.character.send(new ActivateRegenEvent(id, 10, durationInSeconds));
-        return "Added regen action '" + id + "' with a duration of " + durationInSeconds + " seconds";
     }
 
 }
