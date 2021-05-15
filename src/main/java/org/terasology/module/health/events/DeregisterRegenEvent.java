@@ -9,10 +9,6 @@ import static org.terasology.module.health.systems.RegenAuthoritySystem.BASE_REG
 public class DeregisterRegenEvent implements Event {
     public String id;
 
-    public DeregisterRegenEvent() {
-        id = BASE_REGEN;
-    }
-
     public DeregisterRegenEvent(String id) {
         this.id = id;
     }
