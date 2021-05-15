@@ -5,8 +5,8 @@ package org.terasology.module.health.components;
 import org.terasology.engine.entitySystem.Component;
 import org.terasology.engine.network.Replicate;
 import org.terasology.gestalt.naming.Name;
-import org.terasology.module.health.events.ActivateRegenEvent;
-import org.terasology.module.health.events.DeactivateRegenEvent;
+import org.terasology.module.health.events.RegisterRegenEvent;
+import org.terasology.module.health.events.DeregisterRegenEvent;
 import org.terasology.module.health.time.Instant;
 
 import java.util.HashMap;
@@ -39,8 +39,8 @@ import java.util.Map;
  * }
  * </pre>
  *
- * @see ActivateRegenEvent
- * @see DeactivateRegenEvent
+ * @see RegisterRegenEvent
+ * @see DeregisterRegenEvent
  */
 public class RegenComponent implements Component {
     /**

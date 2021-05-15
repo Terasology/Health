@@ -15,8 +15,8 @@ import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.components.RegenComponent;
 import org.terasology.module.health.core.BaseRegenAuthoritySystem;
 import org.terasology.module.health.core.BaseRegenComponent;
-import org.terasology.module.health.events.ActivateRegenEvent;
-import org.terasology.module.health.events.DeactivateRegenEvent;
+import org.terasology.module.health.events.RegisterRegenEvent;
+import org.terasology.module.health.events.DeregisterRegenEvent;
 import org.terasology.module.health.events.DoDamageEvent;
 import org.terasology.moduletestingenvironment.MTEExtension;
 import org.terasology.moduletestingenvironment.ModuleTestingHelper;
@@ -54,7 +54,7 @@ public class RegenTest {
         player.addComponent(healthComponent);
         player.addComponent(baseRegenComponent);
 
-        player.send(new ActivateRegenEvent(BaseRegenAuthoritySystem.BASE_REGEN.toString(), -20, -1));
+        player.send(new RegisterRegenEvent(BaseRegenAuthoritySystem.BASE_REGEN.toString(), -20, -1));
 
         return player;
     }
@@ -70,7 +70,7 @@ public class RegenTest {
         player.send(new DoDamageEvent(20));
 
         // Deactivate base regen
-        player.send(new DeactivateRegenEvent(BaseRegenAuthoritySystem.BASE_REGEN.toString()));
+        player.send(new DeregisterRegenEvent(BaseRegenAuthoritySystem.BASE_REGEN.toString()));
         // there may have been some regeneration between the damage event and the deactivation
         // Thus, we compare against the current health which should be less than the max health.
         int currentHealth = player.getComponent(HealthComponent.class).currentHealth;

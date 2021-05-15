@@ -6,14 +6,14 @@ import org.terasology.engine.entitySystem.event.Event;
 
 import static org.terasology.module.health.systems.RegenAuthoritySystem.BASE_REGEN;
 
-public class DeactivateRegenEvent implements Event {
+public class DeregisterRegenEvent implements Event {
     public String id;
 
-    public DeactivateRegenEvent() {
+    public DeregisterRegenEvent() {
         id = BASE_REGEN;
     }
 
-    public DeactivateRegenEvent(String id) {
+    public DeregisterRegenEvent(String id) {
         this.id = id;
     }
 }

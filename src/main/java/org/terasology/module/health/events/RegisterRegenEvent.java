@@ -23,7 +23,7 @@ import static org.terasology.module.health.systems.RegenAuthoritySystem.BASE_REG
  * @see RegenComponent
  * @see HealthComponent
  */
-public class ActivateRegenEvent implements Event {
+public class RegisterRegenEvent implements Event {
     /**
      * Identifier for the cause of this regeneration effect activation.
      */
@@ -43,13 +43,13 @@ public class ActivateRegenEvent implements Event {
      * Base regeneration (or "natural regeneration") is active until the entity is back at full health. The regeneration
      * value is typically derived from {@link HealthComponent#regenRate}.
      */
-    public ActivateRegenEvent(float value) {
+    public RegisterRegenEvent(float value) {
         this.value = value;
         this.id = BASE_REGEN;
         this.durationInSeconds = -1;
     }
 
-    public ActivateRegenEvent(Name id) {
+    public RegisterRegenEvent(Name id) {
         this.id = id.toString();
         this.durationInSeconds = -1;
     }
@@ -70,7 +70,7 @@ public class ActivateRegenEvent implements Event {
      * points every second over a duration of 5 seconds (e.g., healing 40 health points).
      * <pre>
      * {@code
-     * new ActivateRegenEvent("potions:smallHealingPotion", 8, 5);
+     * new RegisterRegenEvent("potions:smallHealingPotion", 8, 5);
      * }
      * </pre>
      *
@@ -78,7 +78,7 @@ public class ActivateRegenEvent implements Event {
      * @param value additional health generation amount per tick
      * @param durationInSeconds the effect duration in seconds
      */
-    public ActivateRegenEvent(String id, float value, float durationInSeconds) {
+    public RegisterRegenEvent(String id, float value, float durationInSeconds) {
         this.id = id;
         this.value = value;
         this.durationInSeconds = durationInSeconds;

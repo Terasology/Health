@@ -6,14 +6,13 @@ package org.terasology.module.health.core;
 import org.terasology.engine.core.Time;
 import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.entitySystem.entity.lifecycleEvents.OnActivatedComponent;
-import org.terasology.engine.entitySystem.entity.lifecycleEvents.OnAddedComponent;
 import org.terasology.engine.entitySystem.event.ReceiveEvent;
 import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
 import org.terasology.engine.registry.In;
 import org.terasology.module.health.components.HealthComponent;
-import org.terasology.module.health.events.ActivateRegenEvent;
+import org.terasology.module.health.events.RegisterRegenEvent;
 import org.terasology.module.health.events.BeforeRegenEvent;
 import org.terasology.module.health.events.OnDamagedEvent;
 import org.terasology.gestalt.naming.Name;
@@ -36,7 +35,7 @@ public class BaseRegenAuthoritySystem extends BaseComponentSystem {
      */
     @ReceiveEvent(components = {BaseRegenComponent.class})
     public void registerBaseRegen(OnActivatedComponent event, EntityRef entity) {
-        entity.send(new ActivateRegenEvent(BASE_REGEN));
+        entity.send(new RegisterRegenEvent(BASE_REGEN));
     }
 
     /**
