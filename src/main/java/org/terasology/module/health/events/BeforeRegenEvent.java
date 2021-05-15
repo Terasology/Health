@@ -8,26 +8,25 @@ import org.terasology.gestalt.naming.Name;
 
 /**
  * A <i>collector event</i> to allow interested systems to contribute to a regeneration action.
- *
- * A separate collector event is sent for each registered regeneration id. The resulting amount per regeneration id is
- * at minimum 0 (no negative effects due to regeneration). The final regeneration amount is computed from the sum of
- * all amounts per regeneration id.
- *
+ * <p>
+ * An individual collector event is sent for each registered regeneration effect. The resulting amount per regeneration
+ * effect is at minimum 0 (no negative effects due to regeneration). The final regeneration amount is computed as the
+ * sum of all individual regeneration effect amounts.
+ * <p>
  * To inflict damage caused by regeneration send a separate {@link DoDamageEvent} instead.
  */
 public class BeforeRegenEvent extends AbstractConsumableValueModifiableEvent {
-
     final Name id;
 
+    // TODO: make package-private after restructuring module (logical instead of ECS-based packages)
     public BeforeRegenEvent(Name id, float baseValue) {
         super(baseValue);
         this.id = id;
     }
 
-    public BeforeRegenEvent(String id, float baseValue) {
-        this(new Name(id), baseValue);
-    }
-
+    /**
+     * Identifier of the regeneration effect to collect contribution for.
+     */
     public Name getId() {
         return id;
     }

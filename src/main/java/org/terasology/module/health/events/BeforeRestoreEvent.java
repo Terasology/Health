@@ -11,6 +11,7 @@ import org.terasology.engine.entitySystem.event.AbstractConsumableValueModifiabl
  */
 public class BeforeRestoreEvent extends AbstractConsumableValueModifiableEvent {
 
+    // TODO: make package-private after restructuring module (logical instead of ECS-based packages)
     public BeforeRestoreEvent(int baseValue) {
         super(baseValue);
     }

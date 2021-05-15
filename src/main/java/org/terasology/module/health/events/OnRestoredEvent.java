@@ -7,7 +7,8 @@ import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.network.OwnerEvent;
 
 /**
- * This event is sent after the entity is restored. Final event of restoration logic.
+ * A <i>notification event</i> to inform that an entity was restored. This is the final event of the {@link
+ * org.terasology.module.health.systems.RestorationAuthoritySystem Restoration Event Flow}.
  */
 @OwnerEvent
 public class OnRestoredEvent extends OnHealthChangedEvent {
@@ -24,6 +25,9 @@ public class OnRestoredEvent extends OnHealthChangedEvent {
                 "instead");
     }
 
+    /**
+     * The amount of health points that was restored.
+     */
     public int getRestorationAmount() {
         return change;
     }

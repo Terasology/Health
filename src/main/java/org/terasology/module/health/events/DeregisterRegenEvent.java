@@ -7,11 +7,25 @@ import org.terasology.gestalt.naming.Name;
 import org.terasology.module.health.components.RegenComponent;
 import org.terasology.module.health.systems.RegenAuthoritySystem;
 
-import static org.terasology.module.health.systems.RegenAuthoritySystem.BASE_REGEN;
-
+/**
+ * Send this event to immediately and explicitly deregister a regeneration effect from an entity.
+ * <p>
+ * This event does not have an effect, if the referenced regeneration effect is not registered on the target entity.
+ *
+ * @see RegenAuthoritySystem
+ * @see RegenComponent
+ */
 public class DeregisterRegenEvent implements Event {
+    /**
+     * Identifier of the regeneration effect to be removed.
+     */
     public Name id;
 
+    /**
+     * Deregister a regeneration effect from the target entity.
+     *
+     * @param id identifier of the effect
+     */
     public DeregisterRegenEvent(Name id) {
         this.id = id;
     }
