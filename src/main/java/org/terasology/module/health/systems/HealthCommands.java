@@ -118,10 +118,8 @@ public class HealthCommands extends BaseComponentSystem {
     public String checkResistance(@Sender EntityRef clientEntity) {
         ClientComponent player = clientEntity.getComponent(ClientComponent.class);
         DamageResistComponent damageResist = player.character.getComponent(DamageResistComponent.class);
-        if (damageResist != null) {
-            if (damageResist.damageTypes != null) {
-                return damageResist.damageTypes.entrySet().toString();
-            }
+        if (damageResist != null && damageResist.damageTypes != null) {
+            return damageResist.damageTypes.entrySet().toString();
         }
         return "You don't have Resistance to any type of damage.";
     }
