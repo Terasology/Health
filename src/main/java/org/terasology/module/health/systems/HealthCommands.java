@@ -147,12 +147,14 @@ public class HealthCommands extends BaseComponentSystem {
     public String setMaxHealth(@Sender EntityRef client, @CommandParam("max") int max) {
         ClientComponent clientComp = client.getComponent(ClientComponent.class);
         HealthComponent health = clientComp.character.getComponent(HealthComponent.class);
-        float oldMaxHealth = health.maxHealth;
+
         if (health != null) {
+            float oldMaxHealth = health.maxHealth;
             health.maxHealth = max;
             clientComp.character.saveComponent(health);
+            return "Max health changed from " + oldMaxHealth + " to " + max;
         }
-        return "Max health changed from " + oldMaxHealth + " to " + max;
+        return "... nothing to do";
     }
 
     @Command(shortDescription = "Set health regen rate", runOnServer = true,
