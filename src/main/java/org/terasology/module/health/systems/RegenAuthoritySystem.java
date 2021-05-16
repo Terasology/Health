@@ -14,10 +14,9 @@ import org.terasology.engine.registry.In;
 import org.terasology.gestalt.naming.Name;
 import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.components.RegenComponent;
-import org.terasology.module.health.events.RegisterRegenEvent;
 import org.terasology.module.health.events.BeforeRegenEvent;
 import org.terasology.module.health.events.DeregisterRegenEvent;
-import org.terasology.module.health.time.Duration;
+import org.terasology.module.health.events.RegisterRegenEvent;
 import org.terasology.module.health.time.Instant;
 
 /**
@@ -43,7 +42,7 @@ public class RegenAuthoritySystem extends BaseComponentSystem implements UpdateS
      * This is required as the sampling rate of applying regeneration effects is usually lower than the tick rate of the
      * game.
      */
-    float regenTick = 0f;
+    float regenTick;
 
     @Override
     public void update(float delta) {

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.module.health.systems;
 
-import org.terasology.gestalt.assets.ResourceUrn;
 import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.entitySystem.prefab.Prefab;
 import org.terasology.engine.entitySystem.prefab.PrefabManager;
@@ -18,10 +17,10 @@ import org.terasology.engine.network.ClientComponent;
 import org.terasology.engine.registry.In;
 import org.terasology.engine.registry.Share;
 import org.terasology.engine.utilities.Assets;
+import org.terasology.gestalt.assets.ResourceUrn;
 import org.terasology.module.health.components.DamageResistComponent;
 import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.core.BaseRegenComponent;
-import org.terasology.module.health.events.RegisterRegenEvent;
 import org.terasology.module.health.events.DoDamageEvent;
 import org.terasology.module.health.events.DoRestoreEvent;
 
@@ -84,12 +83,14 @@ public class HealthCommands extends BaseComponentSystem {
             if (damageType.equals("all")) {
                 damageResist.damageTypes = new HashMap<>();
                 damageResist.damageTypes.put("all", value);
-                if (value == 0)
+                if (value == 0) {
                     player.character.removeComponent(DamageResistComponent.class);
+                }
             } else {
                 if (prefabManager.exists(damageType)) {
-                    if (damageResist.damageTypes == null)
+                    if (damageResist.damageTypes == null) {
                         damageResist.damageTypes = new HashMap<>();
+                    }
                     if (value == 0) {
                         damageResist.damageTypes.remove(damageType);
                     } else {
@@ -118,8 +119,9 @@ public class HealthCommands extends BaseComponentSystem {
         ClientComponent player = clientEntity.getComponent(ClientComponent.class);
         DamageResistComponent damageResist = player.character.getComponent(DamageResistComponent.class);
         if (damageResist != null) {
-            if (damageResist.damageTypes != null)
+            if (damageResist.damageTypes != null) {
                 return damageResist.damageTypes.entrySet().toString();
+            }
         }
         return "You don't have Resistance to any type of damage.";
     }

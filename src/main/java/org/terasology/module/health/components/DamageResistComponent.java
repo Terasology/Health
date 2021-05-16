@@ -3,8 +3,9 @@
 package org.terasology.module.health.components;
 
 import org.terasology.engine.entitySystem.Component;
+
 import java.util.Map;
 
 public class DamageResistComponent implements Component {
-   public Map<String,Float> damageTypes;
+    public Map<String, Float> damageTypes;
 }

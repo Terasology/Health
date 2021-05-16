@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.module.health.systems;
 
+import org.joml.Vector2f;
 import org.joml.Vector2fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -34,16 +35,13 @@ import org.terasology.engine.world.block.family.BlockFamily;
 import org.terasology.engine.world.block.regions.ActAsBlockComponent;
 import org.terasology.engine.world.block.sounds.BlockSounds;
 import org.terasology.engine.world.block.tiles.WorldAtlas;
+import org.terasology.math.TeraMath;
 import org.terasology.module.health.components.BlockDamagedComponent;
 import org.terasology.module.health.components.HealthComponent;
-import org.terasology.module.health.components.RegenComponent;
 import org.terasology.module.health.core.BaseRegenComponent;
-import org.terasology.module.health.core.BaseRegenAuthoritySystem;
 import org.terasology.module.health.events.BeforeDamagedEvent;
 import org.terasology.module.health.events.OnDamagedEvent;
 import org.terasology.module.health.events.OnFullyHealedEvent;
-import org.terasology.math.TeraMath;
-import org.terasology.module.health.time.Instant;
 
 import java.util.Arrays;
 import java.util.List;
@@ -95,7 +93,7 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
      * @param event Event sent when block is fully healed
      * @param entity Block entity
      */
-    @ReceiveEvent(components = {BlockDamagedComponent.class})
+    @ReceiveEvent(components = BlockDamagedComponent.class)
     public void onRepaired(OnFullyHealedEvent event, EntityRef entity) {
         entity.removeComponent(BlockDamagedComponent.class);
     }
@@ -164,7 +162,7 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
             spriteComponent.texture = terrainTexture.get();
             spriteComponent.textureSize.set(spriteSize, spriteSize);
 
-            final List<org.joml.Vector2f> offsets = computeOffsets(blockAppearance, particleScale);
+            final List<Vector2f> offsets = computeOffsets(blockAppearance, particleScale);
 
             TextureOffsetGeneratorComponent textureOffsetGeneratorComponent = builder.getComponent(TextureOffsetGeneratorComponent.class);
             textureOffsetGeneratorComponent.validOffsets.addAll(offsets);
@@ -181,19 +179,23 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
      *
      * @return a list of random offsets sampled from all block parts
      */
-    private List<org.joml.Vector2f> computeOffsets(BlockAppearance blockAppearance, float scale) {
+    private List<Vector2f> computeOffsets(BlockAppearance blockAppearance, float scale) {
         final float relativeTileSize = worldAtlas.getRelativeTileSize();
         final int absoluteTileSize = worldAtlas.getTileSize();
         final float pixelSize = relativeTileSize / absoluteTileSize;
         final int spriteWidth = TeraMath.ceilToInt(scale * absoluteTileSize);
 
-        final Stream<Vector2fc> baseOffsets = Arrays.stream(BlockPart.sideValues()).map(blockAppearance::getTextureAtlasPos);
+        final Stream<Vector2fc> baseOffsets =
+                Arrays.stream(BlockPart.sideValues()).map(blockAppearance::getTextureAtlasPos);
 
         return baseOffsets.flatMap(baseOffset ->
-                    IntStream.range(0, 8).boxed().map(i ->
-                        new org.joml.Vector2f(baseOffset).add(random.nextInt(absoluteTileSize - spriteWidth) * pixelSize, random.nextInt(absoluteTileSize - spriteWidth) * pixelSize)
-                    )
-                ).collect(Collectors.toList());
+                IntStream.range(0, 8).boxed()
+                        .map(i ->
+                                new Vector2f(baseOffset)
+                                        .add(random.nextInt(absoluteTileSize - spriteWidth) * pixelSize,
+                                                random.nextInt(absoluteTileSize - spriteWidth) * pixelSize)
+                        )
+        ).collect(Collectors.toList());
     }
 
     @ReceiveEvent(netFilter = RegisterMode.AUTHORITY)
