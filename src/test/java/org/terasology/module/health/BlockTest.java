@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MTEExtension.class)
-@Dependencies({"Health"})
+@Dependencies("Health")
 @Tag("MteTest")
 @Disabled("The test has some weird timing issues which will sporadically fail it. (see #70)")
 public class BlockTest {

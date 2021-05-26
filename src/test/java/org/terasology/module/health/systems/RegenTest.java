@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MTEExtension.class)
-@Dependencies({"Health"})
+@Dependencies("Health")
 @Tag("MteTest")
 public class RegenTest {
 

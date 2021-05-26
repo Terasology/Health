@@ -92,7 +92,7 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
      * @param event Event sent when block is fully healed
      * @param entity Block entity
      */
-    @ReceiveEvent(components = {BlockDamagedComponent.class})
+    @ReceiveEvent(components = BlockDamagedComponent.class)
     public void onRepaired(OnFullyHealedEvent event, EntityRef entity) {
         entity.removeComponent(BlockDamagedComponent.class);
     }
