@@ -36,14 +36,11 @@ import org.terasology.engine.world.block.sounds.BlockSounds;
 import org.terasology.engine.world.block.tiles.WorldAtlas;
 import org.terasology.module.health.components.BlockDamagedComponent;
 import org.terasology.module.health.components.HealthComponent;
-import org.terasology.module.health.components.RegenComponent;
 import org.terasology.module.health.core.BaseRegenComponent;
-import org.terasology.module.health.core.BaseRegenAuthoritySystem;
 import org.terasology.module.health.events.BeforeDamagedEvent;
 import org.terasology.module.health.events.OnDamagedEvent;
 import org.terasology.module.health.events.OnFullyHealedEvent;
 import org.terasology.math.TeraMath;
-import org.terasology.module.health.time.Instant;
 
 import java.util.Arrays;
 import java.util.List;
@@ -95,7 +92,7 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
      * @param event Event sent when block is fully healed
      * @param entity Block entity
      */
-    @ReceiveEvent(components = {BlockDamagedComponent.class})
+    @ReceiveEvent(components = BlockDamagedComponent.class)
     public void onRepaired(OnFullyHealedEvent event, EntityRef entity) {
         entity.removeComponent(BlockDamagedComponent.class);
     }
@@ -191,7 +188,8 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
 
         return baseOffsets.flatMap(baseOffset ->
                     IntStream.range(0, 8).boxed().map(i ->
-                        new org.joml.Vector2f(baseOffset).add(random.nextInt(absoluteTileSize - spriteWidth) * pixelSize, random.nextInt(absoluteTileSize - spriteWidth) * pixelSize)
+                        new org.joml.Vector2f(baseOffset).add(random.nextInt(absoluteTileSize - spriteWidth) * pixelSize,
+                                                              random.nextInt(absoluteTileSize - spriteWidth) * pixelSize)
                     )
                 ).collect(Collectors.toList());
     }

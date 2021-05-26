@@ -33,7 +33,7 @@ public class BaseRegenAuthoritySystem extends BaseComponentSystem {
      *
      * @param entity the entity with {@link BaseRegenComponent} that was created, loaded or extended with that component
      */
-    @ReceiveEvent(components = {BaseRegenComponent.class})
+    @ReceiveEvent(components = BaseRegenComponent.class)
     public void registerBaseRegen(OnActivatedComponent event, EntityRef entity) {
         entity.send(new RegisterRegenEvent(BASE_REGEN));
     }
