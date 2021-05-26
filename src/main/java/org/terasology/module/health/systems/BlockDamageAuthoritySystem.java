@@ -36,14 +36,11 @@ import org.terasology.engine.world.block.sounds.BlockSounds;
 import org.terasology.engine.world.block.tiles.WorldAtlas;
 import org.terasology.module.health.components.BlockDamagedComponent;
 import org.terasology.module.health.components.HealthComponent;
-import org.terasology.module.health.components.RegenComponent;
 import org.terasology.module.health.core.BaseRegenComponent;
-import org.terasology.module.health.core.BaseRegenAuthoritySystem;
 import org.terasology.module.health.events.BeforeDamagedEvent;
 import org.terasology.module.health.events.OnDamagedEvent;
 import org.terasology.module.health.events.OnFullyHealedEvent;
 import org.terasology.math.TeraMath;
-import org.terasology.module.health.time.Instant;
 
 import java.util.Arrays;
 import java.util.List;

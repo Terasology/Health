@@ -15,7 +15,6 @@ import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.components.RegenComponent;
 import org.terasology.module.health.core.BaseRegenAuthoritySystem;
 import org.terasology.module.health.core.BaseRegenComponent;
-import org.terasology.module.health.events.RegisterRegenEvent;
 import org.terasology.module.health.events.DeregisterRegenEvent;
 import org.terasology.module.health.events.DoDamageEvent;
 import org.terasology.moduletestingenvironment.MTEExtension;
@@ -23,7 +22,6 @@ import org.terasology.moduletestingenvironment.ModuleTestingHelper;
 import org.terasology.moduletestingenvironment.extension.Dependencies;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MTEExtension.class)

@@ -21,7 +21,6 @@ import org.terasology.engine.utilities.Assets;
 import org.terasology.module.health.components.DamageResistComponent;
 import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.core.BaseRegenComponent;
-import org.terasology.module.health.events.RegisterRegenEvent;
 import org.terasology.module.health.events.DoDamageEvent;
 import org.terasology.module.health.events.DoRestoreEvent;
 

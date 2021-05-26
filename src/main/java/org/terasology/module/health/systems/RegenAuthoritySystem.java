@@ -17,7 +17,6 @@ import org.terasology.module.health.components.RegenComponent;
 import org.terasology.module.health.events.RegisterRegenEvent;
 import org.terasology.module.health.events.BeforeRegenEvent;
 import org.terasology.module.health.events.DeregisterRegenEvent;
-import org.terasology.module.health.time.Duration;
 import org.terasology.module.health.time.Instant;
 
 /**
