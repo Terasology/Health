@@ -188,7 +188,8 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
 
         return baseOffsets.flatMap(baseOffset ->
                     IntStream.range(0, 8).boxed().map(i ->
-                        new org.joml.Vector2f(baseOffset).add(random.nextInt(absoluteTileSize - spriteWidth) * pixelSize, random.nextInt(absoluteTileSize - spriteWidth) * pixelSize)
+                        new org.joml.Vector2f(baseOffset).add(random.nextInt(absoluteTileSize - spriteWidth) * pixelSize,
+                                                              random.nextInt(absoluteTileSize - spriteWidth) * pixelSize)
                     )
                 ).collect(Collectors.toList());
     }
