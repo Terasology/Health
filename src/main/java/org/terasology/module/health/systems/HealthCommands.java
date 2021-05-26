@@ -83,12 +83,14 @@ public class HealthCommands extends BaseComponentSystem {
             if (damageType.equals("all")) {
                 damageResist.damageTypes = new HashMap<>();
                 damageResist.damageTypes.put("all", value);
-                if (value == 0)
+                if (value == 0) {
                     player.character.removeComponent(DamageResistComponent.class);
+                }
             } else {
                 if (prefabManager.exists(damageType)) {
-                    if (damageResist.damageTypes == null)
+                    if (damageResist.damageTypes == null) {
                         damageResist.damageTypes = new HashMap<>();
+                    }
                     if (value == 0) {
                         damageResist.damageTypes.remove(damageType);
                     } else {
@@ -117,8 +119,9 @@ public class HealthCommands extends BaseComponentSystem {
         ClientComponent player = clientEntity.getComponent(ClientComponent.class);
         DamageResistComponent damageResist = player.character.getComponent(DamageResistComponent.class);
         if (damageResist != null) {
-            if (damageResist.damageTypes != null)
+            if (damageResist.damageTypes != null) {
                 return damageResist.damageTypes.entrySet().toString();
+            }
         }
         return "You don't have Resistance to any type of damage.";
     }
