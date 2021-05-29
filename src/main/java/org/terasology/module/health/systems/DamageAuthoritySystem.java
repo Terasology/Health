@@ -3,8 +3,6 @@
 package org.terasology.module.health.systems;
 
 import org.joml.Vector3f;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.terasology.engine.audio.StaticSound;
 import org.terasology.engine.audio.events.PlaySoundEvent;
 import org.terasology.engine.audio.events.PlaySoundForOwnerEvent;
@@ -52,8 +50,6 @@ import org.terasology.module.health.events.OnDamagedEvent;
  */
 @RegisterSystem(RegisterMode.AUTHORITY)
 public class DamageAuthoritySystem extends BaseComponentSystem {
-
-    private static final Logger logger = LoggerFactory.getLogger(DamageAuthoritySystem.class);
 
     @In
     private Time time;
@@ -225,7 +221,7 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
         float velocity = horizVelocity.length();
 
         if (velocity > healthComponent.horizontalDamageSpeedThreshold) {
-            if (characterSounds.lastSoundTime + CharacterSoundSystem.MIN_TIME < time.getGameTimeInMs()) {
+            if (characterSounds.lastSoundTime + CharacterSoundSystem.MIN_TIME < time.getGameTimeInMs()) { // NOPMD - if statements separated on purpose
                 StaticSound sound = random.nextItem(characterSounds.landingSounds);
                 if (sound != null) {
                     entity.send(new PlaySoundEvent(sound, characterSounds.landingVolume));

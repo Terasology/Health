@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.module.health.systems;
 
-import org.terasology.gestalt.assets.ResourceUrn;
 import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.entitySystem.prefab.Prefab;
 import org.terasology.engine.entitySystem.prefab.PrefabManager;
@@ -18,6 +17,7 @@ import org.terasology.engine.network.ClientComponent;
 import org.terasology.engine.registry.In;
 import org.terasology.engine.registry.Share;
 import org.terasology.engine.utilities.Assets;
+import org.terasology.gestalt.assets.ResourceUrn;
 import org.terasology.module.health.components.DamageResistComponent;
 import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.core.BaseRegenComponent;
@@ -118,10 +118,8 @@ public class HealthCommands extends BaseComponentSystem {
     public String checkResistance(@Sender EntityRef clientEntity) {
         ClientComponent player = clientEntity.getComponent(ClientComponent.class);
         DamageResistComponent damageResist = player.character.getComponent(DamageResistComponent.class);
-        if (damageResist != null) {
-            if (damageResist.damageTypes != null) {
-                return damageResist.damageTypes.entrySet().toString();
-            }
+        if (damageResist != null && damageResist.damageTypes != null) {
+            return damageResist.damageTypes.entrySet().toString();
         }
         return "You don't have Resistance to any type of damage.";
     }
@@ -147,12 +145,14 @@ public class HealthCommands extends BaseComponentSystem {
     public String setMaxHealth(@Sender EntityRef client, @CommandParam("max") int max) {
         ClientComponent clientComp = client.getComponent(ClientComponent.class);
         HealthComponent health = clientComp.character.getComponent(HealthComponent.class);
-        float oldMaxHealth = health.maxHealth;
+
         if (health != null) {
+            float oldMaxHealth = health.maxHealth;
             health.maxHealth = max;
             clientComp.character.saveComponent(health);
+            return "Max health changed from " + oldMaxHealth + " to " + max;
         }
-        return "Max health changed from " + oldMaxHealth + " to " + max;
+        return "... nothing to do";
     }
 
     @Command(shortDescription = "Set health regen rate", runOnServer = true,

@@ -29,8 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tag("MteTest")
 public class RegenTest {
 
-    private static final float BUFFER = 0.2f; // 200 ms buffer time
-
     @In
     protected EntityManager entityManager;
     @In
@@ -104,7 +102,6 @@ public class RegenTest {
         assertTrue(player.hasComponent(RegenComponent.class));
 
         // wait for the regeneration to be finished: 5 dmg /  1hp/s = 5 seconds (+ 200ms buffer)
-        float regenEnded = time.getGameTime() + 5f + BUFFER;
         helper.runWhile(5200, () -> true);
 
         assertEquals(player.getComponent(HealthComponent.class).currentHealth, 100);

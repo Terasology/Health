@@ -6,8 +6,6 @@ package org.terasology.module.health;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.terasology.engine.entitySystem.entity.EntityManager;
 import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.logic.health.EngineDamageTypes;
@@ -31,8 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Dependencies("Health")
 @Tag("MteTest")
 public class DamageEventTest {
-    private static final Logger logger = LoggerFactory.getLogger(DamageEventTest.class);
-
     @In
     protected EntityManager entityManager;
     @In
@@ -100,7 +96,6 @@ public class DamageEventTest {
 
         EntityRef dummyInstigator = entityManager.create();
 
-
         TestEventReceiver<BeforeDamagedEvent> receiver = new TestEventReceiver<>(helper.getHostContext(),
                 BeforeDamagedEvent.class,
                 (event, entity) -> {
@@ -117,7 +112,7 @@ public class DamageEventTest {
         // Expected health value is ( 50 - (-30) ) == 80
         assertEquals(80, player.getComponent(HealthComponent.class).currentHealth);
     }
-
+    
     @Test
     public void damageEventCancelTest() {
         final EntityRef player = newPlayer(50);
