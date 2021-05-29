@@ -6,8 +6,6 @@ import org.joml.Vector2f;
 import org.joml.Vector2fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
-import org.terasology.engine.audio.StaticSound;
-import org.terasology.engine.audio.events.PlaySoundEvent;
 import org.terasology.engine.entitySystem.entity.EntityBuilder;
 import org.terasology.engine.entitySystem.entity.EntityManager;
 import org.terasology.engine.entitySystem.entity.EntityRef;
@@ -31,10 +29,10 @@ import org.terasology.engine.world.block.BlockPart;
 import org.terasology.engine.world.block.entity.damage.BlockDamageModifierComponent;
 import org.terasology.engine.world.block.family.BlockFamily;
 import org.terasology.engine.world.block.regions.ActAsBlockComponent;
-import org.terasology.engine.world.block.sounds.BlockSounds;
 import org.terasology.engine.world.block.tiles.WorldAtlas;
 import org.terasology.math.TeraMath;
 import org.terasology.module.health.components.BlockDamagedComponent;
+import org.terasology.module.health.components.DamageSoundComponent;
 import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.core.BaseRegenComponent;
 import org.terasology.module.health.events.BeforeDamagedEvent;
@@ -92,10 +90,10 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
 
     /** Adds marker component to block which is damaged. */
     @ReceiveEvent
-    public void onDamaged(OnDamagedEvent event, EntityRef entity, BlockComponent blockComponent, LocationComponent locComp) {
-        onDamagedCommon(event, blockComponent.getBlock().getBlockFamily(), locComp.getWorldPosition(new Vector3f()), entity);
-        if (!entity.hasComponent(BlockDamagedComponent.class)) {
-            entity.addComponent(new BlockDamagedComponent());
+    public void onDamaged(OnDamagedEvent event, EntityRef blockEntity, BlockComponent blockComponent, LocationComponent locComp) {
+        onDamagedCommon(event, blockComponent.getBlock().getBlockFamily(), locComp.getWorldPosition(new Vector3f()), blockEntity);
+        if (!blockEntity.hasComponent(BlockDamagedComponent.class)) {
+            blockEntity.addComponent(new BlockDamagedComponent());
         }
     }
 
@@ -106,26 +104,20 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
         }
     }
 
-    private void onDamagedCommon(OnDamagedEvent event, BlockFamily blockFamily, Vector3fc location, EntityRef entityRef) {
+    private void onDamagedCommon(OnDamagedEvent event, BlockFamily blockFamily, Vector3fc location, EntityRef block) {
         BlockDamageModifierComponent blockDamageSettings = event.getType().getComponent(BlockDamageModifierComponent.class);
         boolean skipDamageEffects = false;
         if (blockDamageSettings != null) {
             skipDamageEffects = blockDamageSettings.skipPerBlockEffects;
         }
         if (!skipDamageEffects) {
-            onPlayBlockDamageCommon(blockFamily, location, entityRef);
+            onPlayBlockDamageCommon(blockFamily, location, block);
         }
     }
 
     /** Calls helper function to create block particle effect and plays damage sound. */
-    private void onPlayBlockDamageCommon(BlockFamily family, Vector3fc location, EntityRef entityRef) {
+    private void onPlayBlockDamageCommon(BlockFamily family, Vector3fc location, EntityRef block) {
         createBlockParticleEffect(family, location);
-
-        BlockSounds sounds = family.getArchetypeBlock().getSounds();
-        if (!sounds.getDigSounds().isEmpty()) {
-            StaticSound sound = random.nextItem(sounds.getDigSounds());
-            entityRef.send(new PlaySoundEvent(sound, 1f));
-        }
     }
 
     /**
@@ -255,6 +247,17 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
                 baseRegenComponent.waitBeforeRegen = 1f;
 
                 blockEntity.addComponent(baseRegenComponent);
+            }
+
+            // Give the block entity a damage sound component to make the default damage authority system play sound
+            // effects when a block is damaged.
+            if (!blockEntity.hasComponent(DamageSoundComponent.class)) {
+                BlockFamily blockFamily = type.getBlockFamily();
+
+                DamageSoundComponent damageSounds = new DamageSoundComponent();
+                damageSounds.sounds.addAll(blockFamily.getArchetypeBlock().getSounds().getDigSounds());
+
+                blockEntity.addComponent(damageSounds);
             }
         }
     }
