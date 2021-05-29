@@ -57,7 +57,6 @@ public class BlockTest {
         EntityRef testBlockEntity = blockEntityRegistry.getExistingBlockEntityAt(BLOCK_LOCATION);
 
         // Attack on block, damage of 1 inflicted
-        float currentTime = time.getGameTime();
         testBlockEntity.send(new AttackEvent(testBlockEntity, testBlockEntity));
 
         // Make sure that the attack actually caused damage and started regen
