@@ -12,7 +12,6 @@ import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.entitySystem.entity.internal.PojoEntityManager;
 import org.terasology.engine.logic.location.LocationComponent;
 import org.terasology.engine.math.Direction;
-import org.terasology.module.health.systems.HealthClientSystem;
 
 import java.util.stream.Stream;
 

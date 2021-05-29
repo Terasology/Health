@@ -62,7 +62,6 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
     @In
     private WorldAtlas worldAtlas;
 
-
     private Random random = new FastRandom();
 
     /** Consumes damage event if block is indestructible. */

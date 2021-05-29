@@ -29,9 +29,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RestorationTest {
 
     @In
-    private EntityManager entityManager;
-    @In
     protected ModuleTestingHelper helper;
+    @In
+    private EntityManager entityManager;
 
     private EntityRef newPlayer(int currentHealth) {
         HealthComponent healthComponent = new HealthComponent();
