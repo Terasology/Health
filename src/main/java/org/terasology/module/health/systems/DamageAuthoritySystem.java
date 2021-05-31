@@ -135,36 +135,44 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
     }
 
     /**
-     * Handles damage sound on inflicting damage to entity.
+     * Play the sound of a client's character being damaged to the client only.
      *
-     * @param event OnDamagedEvent triggered when entity is damaged.
-     * @param entity Entity which is damaged.
-     * @param characterSounds Component having sound settings.
+     * This event handler respects {@link CharacterSoundComponent#lastSoundTime} and will only trigger a sound effect if
+     * enough time has elapsed since the last character sound has been played.
+     *
+     * @param event the notification event about the damage
+     * @param entity the entity which has taken damage
+     * @param characterSounds the character-specific sounds
      */
     @ReceiveEvent
-    public void onDamaged(OnDamagedEvent event, EntityRef entity, CharacterSoundComponent characterSounds) {
+    public void playSoundForOwnerOnDamaged(OnDamagedEvent event, EntityRef entity,
+                                           CharacterSoundComponent characterSounds) {
+        //TODO: should the time handling be done in module space, or should there be event handler with high priority
+        //      in the "owner" system to manage these aspects? For instance, consume the sound event if not enough time
+        //      has elapsed, and update the timestamp in case a sound was played.
         if (characterSounds.lastSoundTime + CharacterSoundSystem.MIN_TIME < time.getGameTimeInMs()) {
-
-            // play the sound of damage hitting the character for everyone
-            DamageSoundComponent damageSounds = event.getType().getComponent(DamageSoundComponent.class);
-            if (damageSounds != null && !damageSounds.sounds.isEmpty()) {
-                StaticSound sound = random.nextItem(damageSounds.sounds);
-                if (sound != null) {
-                    entity.send(new PlaySoundEvent(sound, 1f));
-                }
+            StaticSound sound = random.nextItem(characterSounds.damageSounds);
+            if (sound != null) {
+                entity.send(new PlaySoundForOwnerEvent(sound, characterSounds.damageVolume));
+                characterSounds.lastSoundTime = time.getGameTimeInMs();
+                entity.saveComponent(characterSounds);
             }
+        }
+    }
 
-            // play the sound of a client's character being damaged to the client
-            if (!characterSounds.damageSounds.isEmpty()) {
-                StaticSound sound = random.nextItem(characterSounds.damageSounds);
-                if (sound != null) {
-                    entity.send(new PlaySoundForOwnerEvent(sound, characterSounds.damageVolume));
-                }
-            }
-
-            characterSounds.lastSoundTime = time.getGameTimeInMs();
-            entity.saveComponent(characterSounds);
-
+    /**
+     * Play a damage sound for the {@code entity} being hit for everyone.
+     *
+     * @param event the notification event about the damage
+     * @param entity the entity which has taken damage
+     * @param damageSounds the damage sounds of the damaged entity
+     */
+    @ReceiveEvent
+    public void playSoundOnDamaged(OnDamagedEvent event, EntityRef entity,
+                                   DamageSoundComponent damageSounds) {
+        StaticSound sound = random.nextItem(damageSounds.sounds);
+        if (sound != null) {
+            entity.send(new PlaySoundEvent(sound, 1.0f));
         }
     }
 
@@ -221,7 +229,7 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
         float velocity = horizVelocity.length();
 
         if (velocity > healthComponent.horizontalDamageSpeedThreshold) {
-            if (characterSounds.lastSoundTime + CharacterSoundSystem.MIN_TIME < time.getGameTimeInMs()) { // NOPMD - if statements separated on purpose
+            if (characterSounds.lastSoundTime + CharacterSoundSystem.MIN_TIME < time.getGameTimeInMs()) {
                 StaticSound sound = random.nextItem(characterSounds.landingSounds);
                 if (sound != null) {
                     entity.send(new PlaySoundEvent(sound, characterSounds.landingVolume));
