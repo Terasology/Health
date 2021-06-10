@@ -16,6 +16,6 @@ public class DamageSoundComponent implements Component<DamageSoundComponent> {
 
     @Override
     public void copy(DamageSoundComponent other) {
-        this.sounds = other.sounds;
+        this.sounds = Lists.newArrayList(other.sounds);
     }
 }

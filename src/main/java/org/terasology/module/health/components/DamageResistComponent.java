@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.module.health.components;
 
+import com.google.common.collect.Maps;
 import org.terasology.gestalt.entitysystem.component.Component;
 
 import java.util.Map;
@@ -11,6 +12,6 @@ public class DamageResistComponent implements Component<DamageResistComponent> {
 
     @Override
     public void copy(DamageResistComponent other) {
-        this.damageTypes = other.damageTypes;
+        this.damageTypes = Maps.newHashMap(other.damageTypes);
     }
 }

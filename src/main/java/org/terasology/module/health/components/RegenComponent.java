@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.module.health.components;
 
+import com.google.common.collect.Maps;
 import org.terasology.engine.network.Replicate;
 import org.terasology.gestalt.entitysystem.component.Component;
 import org.terasology.gestalt.naming.Name;
@@ -61,6 +62,6 @@ public class RegenComponent implements Component<RegenComponent> {
     @Override
     public void copy(RegenComponent other) {
         this.remainder = other.remainder;
-        this.actions = other.actions;
+        this.actions = Maps.newHashMap(other.actions);
     }
 }
