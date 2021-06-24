@@ -5,12 +5,12 @@ package org.terasology.module.health.events;
 import com.google.common.base.Preconditions;
 import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.entitySystem.prefab.Prefab;
-import org.terasology.engine.network.OwnerEvent;
+import org.terasology.engine.network.BroadcastEvent;
 
 /**
  * This event is sent after damage has been dealt to an entity.
  */
-@OwnerEvent
+@BroadcastEvent
 public class OnDamagedEvent extends OnHealthChangedEvent {
     private final Prefab damageType;
 
