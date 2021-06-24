@@ -129,26 +129,54 @@ public class BlockDamageRenderer extends BaseComponentSystem implements RenderSy
         return Math.round(damagePercentage * 10);
     }
 
+    /**
+     * Show a particle effect for the damaged block based on the block's texture.
+     *
+     * @param event the notification event for the damaged block
+     * @param blockEntity the entity representing the damaged block
+     * @param blockComponent
+     */
     @ReceiveEvent
-    public void onDamaged(OnDamagedEvent event, EntityRef blockEntity, BlockComponent blockComponent, LocationComponent locComp) {
-        onDamagedCommon(event, blockComponent.getBlock().getBlockFamily(), locComp.getWorldPosition(new Vector3f()));
+    public void onDamaged(OnDamagedEvent event, EntityRef blockEntity, BlockComponent blockComponent) {
+        //TODO: the BlockDamageModifierComponent also holds a modifier for `impulsePower` - should that influence the particle effect?
+        if (isEffectsEnabled(event)) {
+            createBlockParticleEffect(blockComponent.getBlock().getBlockFamily(), new Vector3f(blockComponent.getPosition()));
+        }
     }
 
+    /**
+     * Show a particle effect for the damaged block-like entity based on the block's texture.
+     *
+     * @param event the notification event for the damaged block
+     * @param entity the entity acting as a block
+     * @param blockComponent
+     * @param location the location of the block-like entity
+     */
     @ReceiveEvent
-    public void onDamaged(OnDamagedEvent event, EntityRef entity, ActAsBlockComponent blockComponent, LocationComponent locComp) {
+    public void onDamaged(OnDamagedEvent event, EntityRef entity, ActAsBlockComponent blockComponent, LocationComponent location) {
         if (blockComponent.block != null) {
-            onDamagedCommon(event, blockComponent.block, locComp.getWorldPosition(new Vector3f()));
+            //TODO: the BlockDamageModifierComponent also holds a modifier for `impulsePower` - should that influence the particle effect?
+            if (isEffectsEnabled(event)) {
+                createBlockParticleEffect(blockComponent.block, location.getWorldPosition(new Vector3f()));
+            }
         }
     }
 
-    private void onDamagedCommon(OnDamagedEvent event, BlockFamily blockFamily, Vector3fc location) {
+    /**
+     * Whether per-block effects should be shown or not.
+     * <p>
+     * Each damage event may reference a prefab describing the type of damage inflicted. This damage type may have a
+     * {@link BlockDamageModifierComponent} denoting that block effects should be skipped for this damage event.
+     *
+     * @param event the event describing the inflicted damage
+     * @return true if particle effects should be shown, false otherwise
+     */
+    private boolean isEffectsEnabled(OnDamagedEvent event) {
         BlockDamageModifierComponent blockDamageSettings = event.getType().getComponent(BlockDamageModifierComponent.class);
-        boolean skipDamageEffects = blockDamageSettings != null && blockDamageSettings.skipPerBlockEffects;
-
-        if (!skipDamageEffects) {
-            //TODO: move this to BlockDamageRenderer
-            createBlockParticleEffect(blockFamily, location);
+        if (blockDamageSettings != null) {
+            return !blockDamageSettings.skipPerBlockEffects;
         }
+        return true;
     }
 
     /**
