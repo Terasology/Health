@@ -86,7 +86,6 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
         //      component then.
     }
 
-
     @ReceiveEvent(netFilter = RegisterMode.AUTHORITY)
     public void beforeDamage(BeforeDamagedEvent event, EntityRef entity, BlockComponent blockComp) {
         beforeDamageCommon(event, blockComp.getBlock());
