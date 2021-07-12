@@ -170,7 +170,7 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
         final int spriteWidth = TeraMath.ceilToInt(scale * absoluteTileSize);
 
         final Stream<Vector2fc> baseOffsets =
-                Arrays.stream(BlockPart.sideValues()).map(blockAppearance::getTextureAtlasPos);
+                Arrays.stream(BlockPart.values()).map(blockAppearance::getTextureAtlasPos);
 
         return baseOffsets.flatMap(baseOffset ->
                 IntStream.range(0, 8).boxed()
