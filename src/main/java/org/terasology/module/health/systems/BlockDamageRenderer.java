@@ -26,7 +26,12 @@ import org.terasology.module.health.components.HealthComponent;
 import java.util.Optional;
 
 /**
- * This system renders damage damaged blocks using the BlockSelectionRenderer.
+ * This system visualizes damaged blocks by rendering a damage overlay.
+ * <p>
+ * The system derives a damage effect level between 0 (full health / no damage) and 10 (0 health / full damage). Starting from level 1 to
+ * level 10 the damage overlay effect is taken from the {@code CoreAssets:blockDamageEffects} texture atlas.
+ * <p>
+ * To change the default damage effects the texture can be overridden.
  */
 @RegisterSystem(RegisterMode.CLIENT)
 public class BlockDamageRenderer extends BaseComponentSystem implements RenderSystem {
@@ -43,8 +48,7 @@ public class BlockDamageRenderer extends BaseComponentSystem implements RenderSy
             blockSelectionRenderer = new BlockSelectionRenderer(texture);
         }
         // group the entities into what texture they will use so that there is less recreating meshes (changing a
-        // texture region on the BlockSelectionRenderer
-        // will recreate the mesh to use the different UV coordinates).  Also this allows
+        // texture region on the BlockSelectionRenderer will recreate the mesh to use the different UV coordinates).
         Multimap<Integer, Vector3i> groupedEntitiesByEffect = ArrayListMultimap.create();
 
         for (EntityRef entity : entityManager.getEntitiesWith(HealthComponent.class, BlockComponent.class)) {
@@ -66,8 +70,7 @@ public class BlockDamageRenderer extends BaseComponentSystem implements RenderSy
             }
         }
 
-        // we know that the texture will be the same for each block effect,  just different UV coordinates.
-        // Bind the texture already
+        // Bind the texture already as we know that the texture will be the same for each block effect, just different UV coordinates.
         blockSelectionRenderer.beginRenderOverlay();
 
         for (Integer effectsNumber : groupedEntitiesByEffect.keySet()) {
@@ -84,7 +87,6 @@ public class BlockDamageRenderer extends BaseComponentSystem implements RenderSy
         blockSelectionRenderer.endRenderOverlay();
     }
 
-
     /**
      * Compute the damage effect number as linear mapping from damage percentage to the range [0..10].
      * <p>
@@ -98,18 +100,5 @@ public class BlockDamageRenderer extends BaseComponentSystem implements RenderSy
 
         float damagePercentage = 1f - Math.clamp(0f, 1f, (float) health.currentHealth / health.maxHealth);
         return Math.round(damagePercentage * 10);
-    }
-
-
-    @Override
-    public void renderShadows() {
-    }
-
-    @Override
-    public void renderOpaque() {
-    }
-
-    @Override
-    public void renderAlphaBlend() {
     }
 }
