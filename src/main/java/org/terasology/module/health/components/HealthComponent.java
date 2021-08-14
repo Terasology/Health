@@ -38,7 +38,7 @@ public class HealthComponent implements Component<HealthComponent> {
     public boolean destroyEntityOnNoHealth;
 
     @Override
-    public void copy(HealthComponent other) {
+    public void copyFrom(HealthComponent other) {
         this.maxHealth = other.maxHealth;
         this.fallingDamageSpeedThreshold = other.fallingDamageSpeedThreshold;
         this.horizontalDamageSpeedThreshold = other.horizontalDamageSpeedThreshold;

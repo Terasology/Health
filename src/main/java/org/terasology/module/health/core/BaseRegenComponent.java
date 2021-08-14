@@ -27,7 +27,7 @@ public class BaseRegenComponent implements Component<BaseRegenComponent> {
     public long lastHitTimestampInMs;
 
     @Override
-    public void copy(BaseRegenComponent other) {
+    public void copyFrom(BaseRegenComponent other) {
         this.regenRate = other.regenRate;
         this.waitBeforeRegen = other.waitBeforeRegen;
         this.lastHitTimestampInMs = other.lastHitTimestampInMs;

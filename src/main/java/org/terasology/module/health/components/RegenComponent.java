@@ -60,7 +60,7 @@ public class RegenComponent implements Component<RegenComponent> {
     public Map<Name, Instant> actions = new HashMap<>();
 
     @Override
-    public void copy(RegenComponent other) {
+    public void copyFrom(RegenComponent other) {
         this.remainder = other.remainder;
         this.actions = Maps.newHashMap(other.actions);
     }

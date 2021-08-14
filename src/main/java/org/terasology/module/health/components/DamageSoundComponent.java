@@ -15,7 +15,7 @@ public class DamageSoundComponent implements Component<DamageSoundComponent> {
     public List<StaticSound> sounds = Lists.newArrayList();
 
     @Override
-    public void copy(DamageSoundComponent other) {
+    public void copyFrom(DamageSoundComponent other) {
         this.sounds = Lists.newArrayList(other.sounds);
     }
 }

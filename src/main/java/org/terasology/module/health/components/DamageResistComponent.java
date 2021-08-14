@@ -11,7 +11,7 @@ public class DamageResistComponent implements Component<DamageResistComponent> {
     public Map<String, Float> damageTypes;
 
     @Override
-    public void copy(DamageResistComponent other) {
+    public void copyFrom(DamageResistComponent other) {
         this.damageTypes = Maps.newHashMap(other.damageTypes);
     }
 }
