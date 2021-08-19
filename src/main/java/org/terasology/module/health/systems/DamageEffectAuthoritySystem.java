@@ -120,7 +120,7 @@ public class DamageEffectAuthoritySystem extends BaseComponentSystem {
         final int spriteWidth = TeraMath.ceilToInt(scale * absoluteTileSize);
 
         final Stream<Vector2fc> baseOffsets =
-                Arrays.stream(BlockPart.sideValues()).map(blockAppearance::getTextureAtlasPos);
+                BlockPart.allParts().stream().map(blockAppearance::getTextureAtlasPos);
 
         return baseOffsets.flatMap(baseOffset ->
                 IntStream.range(0, 8).boxed()
