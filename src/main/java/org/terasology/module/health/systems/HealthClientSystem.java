@@ -10,6 +10,7 @@ import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
 import org.terasology.engine.logic.location.LocationComponent;
+import org.terasology.engine.logic.players.LocalPlayer;
 import org.terasology.engine.logic.players.PlayerCharacterComponent;
 import org.terasology.engine.math.Direction;
 import org.terasology.engine.registry.In;
@@ -27,6 +28,8 @@ public class HealthClientSystem extends BaseComponentSystem {
 
     @In
     private NUIManager nuiManager;
+    @In
+    private LocalPlayer localPlayer;
 
     private DirectionalDamageOverlay directionalDamageOverlay;
 
@@ -37,20 +40,30 @@ public class HealthClientSystem extends BaseComponentSystem {
                 "directionalDamageOverlay");
     }
 
+    /**
+     * Handle client-side effects that occur when the local player receives damages.
+     *
+     * @param event the damage notification event
+     * @param entity the player's character entity receiving damage
+     * @param locationComponent the current location of the player
+     * @param healthComponent the current health component of the player
+     */
     @ReceiveEvent(components = PlayerCharacterComponent.class)
     public void onDamaged(OnDamagedEvent event, EntityRef entity,
                           LocationComponent locationComponent,
                           HealthComponent healthComponent) {
-
-        EntityRef instigator = event.getInstigator();
-        if (instigator != null && instigator.hasComponent(LocationComponent.class)) {
-            // Show the relevant direction element
-            Direction direction = determineDamageDirection(instigator, locationComponent);
-            directionalDamageOverlay.show(direction, DAMAGE_OVERLAY_DELAY_SECONDS);
-        } else {
-            // Show non-directional damage indication by making all four indicators visible
-            for (Direction direction : Direction.values()) {
+        // ensure to only show damage overlay if this client's player entity is damaged
+        if (entity.equals(localPlayer.getCharacterEntity())) {
+            EntityRef instigator = event.getInstigator();
+            if (instigator != null && instigator.hasComponent(LocationComponent.class)) {
+                // Show the relevant direction element
+                Direction direction = determineDamageDirection(instigator, locationComponent);
                 directionalDamageOverlay.show(direction, DAMAGE_OVERLAY_DELAY_SECONDS);
+            } else {
+                // Show non-directional damage indication by making all four indicators visible
+                for (Direction direction : Direction.values()) {
+                    directionalDamageOverlay.show(direction, DAMAGE_OVERLAY_DELAY_SECONDS);
+                }
             }
         }
     }

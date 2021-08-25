@@ -2,35 +2,24 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.module.health.systems;
 
-import org.joml.Vector2f;
-import org.joml.Vector2fc;
-import org.joml.Vector3f;
-import org.joml.Vector3fc;
-import org.terasology.engine.entitySystem.entity.EntityBuilder;
 import org.terasology.engine.entitySystem.entity.EntityManager;
 import org.terasology.engine.entitySystem.entity.EntityRef;
+import org.terasology.engine.entitySystem.event.EventPriority;
 import org.terasology.engine.entitySystem.event.ReceiveEvent;
 import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
 import org.terasology.engine.logic.characters.events.AttackEvent;
 import org.terasology.engine.logic.location.LocationComponent;
-import org.terasology.engine.particles.components.ParticleDataSpriteComponent;
-import org.terasology.engine.particles.components.generators.TextureOffsetGeneratorComponent;
 import org.terasology.engine.registry.In;
-import org.terasology.engine.rendering.assets.texture.Texture;
-import org.terasology.engine.utilities.Assets;
 import org.terasology.engine.utilities.random.FastRandom;
 import org.terasology.engine.utilities.random.Random;
 import org.terasology.engine.world.block.Block;
-import org.terasology.engine.world.block.BlockAppearance;
 import org.terasology.engine.world.block.BlockComponent;
-import org.terasology.engine.world.block.BlockPart;
 import org.terasology.engine.world.block.entity.damage.BlockDamageModifierComponent;
 import org.terasology.engine.world.block.family.BlockFamily;
 import org.terasology.engine.world.block.regions.ActAsBlockComponent;
 import org.terasology.engine.world.block.tiles.WorldAtlas;
-import org.terasology.math.TeraMath;
 import org.terasology.module.health.components.BlockDamagedComponent;
 import org.terasology.module.health.components.DamageSoundComponent;
 import org.terasology.module.health.components.HealthComponent;
@@ -38,13 +27,6 @@ import org.terasology.module.health.core.BaseRegenComponent;
 import org.terasology.module.health.events.BeforeDamagedEvent;
 import org.terasology.module.health.events.OnDamagedEvent;
 import org.terasology.module.health.events.OnFullyHealedEvent;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * This system is responsible for giving blocks health when they are attacked and
@@ -63,7 +45,7 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
     private Random random = new FastRandom();
 
     /** Consumes damage event if block is indestructible. */
-    @ReceiveEvent
+    @ReceiveEvent(priority = EventPriority.PRIORITY_HIGH)
     public void beforeDamaged(BeforeDamagedEvent event, EntityRef blockEntity, BlockComponent blockComp) {
         if (!blockComp.getBlock().isDestructible()) {
             event.consume();
@@ -71,7 +53,7 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
     }
 
     /** Consumes damage event if entity acting as block is indestructible. */
-    @ReceiveEvent
+    @ReceiveEvent(priority = EventPriority.PRIORITY_HIGH)
     public void beforeDamaged(BeforeDamagedEvent event, EntityRef blockEntity, ActAsBlockComponent blockComp) {
         if (blockComp.block != null && !blockComp.block.getArchetypeBlock().isDestructible()) {
             event.consume();
@@ -79,19 +61,20 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
     }
 
     /**
-     * Removes the marker component when block is fully healed.
-     * @param event Event sent when block is fully healed
-     * @param entity Block entity
+     * Removes the {@link BlockDamagedComponent} marker component when a block or block-like entity is fully healed.
+     *
+     * @param event the notification event that an entity was fully healed.
+     * @param entity Block entity the (potential) block or block-like entity
      */
     @ReceiveEvent(components = BlockDamagedComponent.class)
     public void onRepaired(OnFullyHealedEvent event, EntityRef entity) {
+        //TODO: should this be split into two handlers for BlockComponent and ActAsBlockComponent?
         entity.removeComponent(BlockDamagedComponent.class);
     }
 
-    /** Adds marker component to block which is damaged. */
+    /** Adds the {@link BlockDamagedComponent} marker component to block which is damaged. */
     @ReceiveEvent
     public void onDamaged(OnDamagedEvent event, EntityRef blockEntity, BlockComponent blockComponent, LocationComponent locComp) {
-        onDamagedCommon(event, blockComponent.getBlock().getBlockFamily(), locComp.getWorldPosition(new Vector3f()), blockEntity);
         if (!blockEntity.hasComponent(BlockDamagedComponent.class)) {
             blockEntity.addComponent(new BlockDamagedComponent());
         }
@@ -99,87 +82,8 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
 
     @ReceiveEvent
     public void onDamaged(OnDamagedEvent event, EntityRef entity, ActAsBlockComponent blockComponent, LocationComponent locComp) {
-        if (blockComponent.block != null) {
-            onDamagedCommon(event, blockComponent.block, locComp.getWorldPosition(new Vector3f()), entity);
-        }
-    }
-
-    private void onDamagedCommon(OnDamagedEvent event, BlockFamily blockFamily, Vector3fc location, EntityRef block) {
-        BlockDamageModifierComponent blockDamageSettings = event.getType().getComponent(BlockDamageModifierComponent.class);
-        boolean skipDamageEffects = false;
-        if (blockDamageSettings != null) {
-            skipDamageEffects = blockDamageSettings.skipPerBlockEffects;
-        }
-        if (!skipDamageEffects) {
-            onPlayBlockDamageCommon(blockFamily, location, block);
-        }
-    }
-
-    /** Calls helper function to create block particle effect and plays damage sound. */
-    private void onPlayBlockDamageCommon(BlockFamily family, Vector3fc location, EntityRef block) {
-        createBlockParticleEffect(family, location);
-    }
-
-    /**
-     * Creates a new entity for the block damage particle effect.
-     *
-     * If the terrain texture of the damaged block is available, the particles will have the block texture. Otherwise,
-     * the default sprite (smoke) is used.
-     *
-     * @param family the {@link BlockFamily} of the damaged block
-     * @param location the location of the damaged block
-     */
-    private void createBlockParticleEffect(BlockFamily family, Vector3fc location) {
-        EntityBuilder builder = entityManager.newBuilder("CoreAssets:defaultBlockParticles");
-        builder.getComponent(LocationComponent.class).setWorldPosition(location);
-
-        Optional<Texture> terrainTexture = Assets.getTexture("engine:terrain");
-        if (terrainTexture.isPresent() && terrainTexture.get().isLoaded()) {
-            final BlockAppearance blockAppearance = family.getArchetypeBlock().getPrimaryAppearance();
-
-            final float relativeTileSize = worldAtlas.getRelativeTileSize();
-            final float particleScale = 0.25f;
-
-            final float spriteSize = relativeTileSize * particleScale;
-
-            ParticleDataSpriteComponent spriteComponent = builder.getComponent(ParticleDataSpriteComponent.class);
-            spriteComponent.texture = terrainTexture.get();
-            spriteComponent.textureSize.set(spriteSize, spriteSize);
-
-            final List<Vector2f> offsets = computeOffsets(blockAppearance, particleScale);
-
-            TextureOffsetGeneratorComponent textureOffsetGeneratorComponent = builder.getComponent(TextureOffsetGeneratorComponent.class);
-            textureOffsetGeneratorComponent.validOffsets.addAll(offsets);
-        }
-
-        builder.build();
-    }
-
-    /**
-     * Computes n random offset values for each block part texture.
-     *
-     * @param blockAppearance the block appearance information to generate offsets from
-     * @param scale the scale of the texture area (should be in 0 < scale <= 1.0)
-     *
-     * @return a list of random offsets sampled from all block parts
-     */
-    private List<Vector2f> computeOffsets(BlockAppearance blockAppearance, float scale) {
-        final float relativeTileSize = worldAtlas.getRelativeTileSize();
-        final int absoluteTileSize = worldAtlas.getTileSize();
-        final float pixelSize = relativeTileSize / absoluteTileSize;
-        final int spriteWidth = TeraMath.ceilToInt(scale * absoluteTileSize);
-
-        final Stream<Vector2fc> baseOffsets =
-                Arrays.stream(BlockPart.values()).map(blockAppearance::getTextureAtlasPos);
-
-        return baseOffsets.flatMap(baseOffset ->
-                IntStream.range(0, 8).boxed()
-                        .map(i ->
-                                new Vector2f(baseOffset)
-                                        .add(random.nextInt(absoluteTileSize - spriteWidth) * pixelSize,
-                                                random.nextInt(absoluteTileSize - spriteWidth) * pixelSize)
-                        )
-        ).collect(Collectors.toList());
+        //TODO: add the marker component also for block-like entities (does not do anything, but all "damaged blocks" are marked with that
+        //      component then.
     }
 
     @ReceiveEvent(netFilter = RegisterMode.AUTHORITY)
