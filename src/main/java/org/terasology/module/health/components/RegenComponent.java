@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.module.health.components;
 
-import org.terasology.engine.entitySystem.Component;
+import com.google.common.collect.Maps;
 import org.terasology.engine.network.Replicate;
+import org.terasology.gestalt.entitysystem.component.Component;
 import org.terasology.gestalt.naming.Name;
-import org.terasology.module.health.events.RegisterRegenEvent;
 import org.terasology.module.health.events.DeregisterRegenEvent;
+import org.terasology.module.health.events.RegisterRegenEvent;
 import org.terasology.module.health.time.Instant;
 
 import java.util.HashMap;
@@ -42,7 +43,7 @@ import java.util.Map;
  * @see RegisterRegenEvent
  * @see DeregisterRegenEvent
  */
-public class RegenComponent implements Component {
+public class RegenComponent implements Component<RegenComponent> {
     /**
      * The decimal place of the last regen tick before rounding the amount to integer.
      * <p>
@@ -57,4 +58,10 @@ public class RegenComponent implements Component {
      */
     @Replicate
     public Map<Name, Instant> actions = new HashMap<>();
+
+    @Override
+    public void copyFrom(RegenComponent other) {
+        this.remainder = other.remainder;
+        this.actions = Maps.newHashMap(other.actions);
+    }
 }
