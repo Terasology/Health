@@ -3,7 +3,7 @@
 package org.terasology.module.health.events;
 
 import org.terasology.engine.entitySystem.entity.EntityRef;
-import org.terasology.engine.entitySystem.event.Event;
+import org.terasology.gestalt.entitysystem.event.Event;
 
 /**
  * The event sent to restore entity to full health.

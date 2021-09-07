@@ -4,7 +4,7 @@ package org.terasology.module.health.events;
 
 import com.google.common.base.Preconditions;
 import org.terasology.engine.entitySystem.entity.EntityRef;
-import org.terasology.engine.entitySystem.event.Event;
+import org.terasology.gestalt.entitysystem.event.Event;
 
 /**
  * A <i>trigger event</i> to restore health to an entity. This event is the starting point of a {@link
