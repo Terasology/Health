@@ -7,6 +7,7 @@ import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.entitySystem.event.EventPriority;
 import org.terasology.engine.entitySystem.event.ReceiveEvent;
 import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
+import org.terasology.engine.entitySystem.systems.NetFilterEvent;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
 import org.terasology.engine.logic.characters.events.AttackEvent;
@@ -86,12 +87,14 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
         //      component then.
     }
 
-    @ReceiveEvent(netFilter = RegisterMode.AUTHORITY)
+    @NetFilterEvent(netFilter = RegisterMode.AUTHORITY)
+    @ReceiveEvent
     public void beforeDamage(BeforeDamagedEvent event, EntityRef entity, BlockComponent blockComp) {
         beforeDamageCommon(event, blockComp.getBlock());
     }
 
-    @ReceiveEvent(netFilter = RegisterMode.AUTHORITY)
+    @NetFilterEvent(netFilter = RegisterMode.AUTHORITY)
+    @ReceiveEvent
     public void beforeDamage(BeforeDamagedEvent event, EntityRef entity, ActAsBlockComponent blockComp) {
         if (blockComp.block != null) {
             beforeDamageCommon(event, blockComp.block.getArchetypeBlock());
@@ -113,14 +116,16 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
     }
 
     /** Causes damage to block without health component, leads to adding health component to the block. */
-    @ReceiveEvent(netFilter = RegisterMode.AUTHORITY)
+    @NetFilterEvent(netFilter = RegisterMode.AUTHORITY)
+    @ReceiveEvent
     public void onAttackHealthlessBlock(AttackEvent event, EntityRef targetEntity, BlockComponent blockComponent) {
         if (!targetEntity.hasComponent(HealthComponent.class)) {
             DamageAuthoritySystem.damageEntity(event, targetEntity);
         }
     }
 
-    @ReceiveEvent(netFilter = RegisterMode.AUTHORITY)
+    @NetFilterEvent(netFilter = RegisterMode.AUTHORITY)
+    @ReceiveEvent
     public void onAttackHealthlessActAsBlock(AttackEvent event, EntityRef targetEntity, ActAsBlockComponent actAsBlockComponent) {
         if (!targetEntity.hasComponent(HealthComponent.class)) {
             DamageAuthoritySystem.damageEntity(event, targetEntity);

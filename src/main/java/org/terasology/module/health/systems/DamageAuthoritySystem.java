@@ -11,6 +11,7 @@ import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.entitySystem.event.ReceiveEvent;
 import org.terasology.engine.entitySystem.prefab.Prefab;
 import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
+import org.terasology.engine.entitySystem.systems.NetFilterEvent;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
 import org.terasology.engine.logic.characters.CharacterMovementComponent;
@@ -64,7 +65,8 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
      * @param event Attack event sent on targetEntity.
      * @param targetEntity The entity which is attacked.
      */
-    @ReceiveEvent(components = HealthComponent.class, netFilter = RegisterMode.AUTHORITY)
+    @NetFilterEvent(netFilter = RegisterMode.AUTHORITY)
+    @ReceiveEvent(components = HealthComponent.class)
     public void onAttackEntity(AttackEvent event, EntityRef targetEntity) {
         damageEntity(event, targetEntity);
     }
