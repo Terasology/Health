@@ -5,6 +5,7 @@ package org.terasology.module.health.systems;
 import org.terasology.engine.entitySystem.entity.EntityManager;
 import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.entitySystem.event.EventPriority;
+import org.terasology.engine.entitySystem.event.Priority;
 import org.terasology.engine.entitySystem.event.ReceiveEvent;
 import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
 import org.terasology.engine.entitySystem.systems.NetFilterEvent;
@@ -46,7 +47,8 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
     private Random random = new FastRandom();
 
     /** Consumes damage event if block is indestructible. */
-    @ReceiveEvent(priority = EventPriority.PRIORITY_HIGH)
+    @Priority(EventPriority.PRIORITY_HIGH)
+    @ReceiveEvent
     public void beforeDamaged(BeforeDamagedEvent event, EntityRef blockEntity, BlockComponent blockComp) {
         if (!blockComp.getBlock().isDestructible()) {
             event.consume();
@@ -54,7 +56,8 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
     }
 
     /** Consumes damage event if entity acting as block is indestructible. */
-    @ReceiveEvent(priority = EventPriority.PRIORITY_HIGH)
+    @Priority(EventPriority.PRIORITY_HIGH)
+    @ReceiveEvent
     public void beforeDamaged(BeforeDamagedEvent event, EntityRef blockEntity, ActAsBlockComponent blockComp) {
         if (blockComp.block != null && !blockComp.block.getArchetypeBlock().isDestructible()) {
             event.consume();

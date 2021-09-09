@@ -32,7 +32,6 @@ import org.terasology.engine.world.block.tiles.WorldAtlas;
 import org.terasology.math.TeraMath;
 import org.terasology.module.health.events.OnDamagedEvent;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

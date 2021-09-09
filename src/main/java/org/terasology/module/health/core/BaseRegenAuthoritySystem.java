@@ -11,11 +11,11 @@ import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
 import org.terasology.engine.registry.In;
+import org.terasology.gestalt.naming.Name;
 import org.terasology.module.health.components.HealthComponent;
-import org.terasology.module.health.events.RegisterRegenEvent;
 import org.terasology.module.health.events.BeforeRegenEvent;
 import org.terasology.module.health.events.OnDamagedEvent;
-import org.terasology.gestalt.naming.Name;
+import org.terasology.module.health.events.RegisterRegenEvent;
 
 /**
  * A system adding core functionality and default behavior based on the mechanics defined in this module.
