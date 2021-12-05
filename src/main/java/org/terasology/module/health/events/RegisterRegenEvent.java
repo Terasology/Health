@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.module.health.events;
 
-import org.terasology.engine.entitySystem.event.Event;
+import org.terasology.gestalt.entitysystem.event.Event;
 import org.terasology.gestalt.naming.Name;
 import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.components.RegenComponent;

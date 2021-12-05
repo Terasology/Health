@@ -3,7 +3,7 @@
 package org.terasology.module.health.events;
 
 import org.terasology.engine.entitySystem.entity.EntityRef;
-import org.terasology.engine.entitySystem.event.Event;
+import org.terasology.gestalt.entitysystem.event.Event;
 
 /**
  * Event sent upon an entity reaching full health if previously on less than full health.

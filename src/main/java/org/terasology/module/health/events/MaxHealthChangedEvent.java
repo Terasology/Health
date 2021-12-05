@@ -3,8 +3,8 @@
 
 package org.terasology.module.health.events;
 
-import org.terasology.engine.entitySystem.event.Event;
 import org.terasology.engine.network.OwnerEvent;
+import org.terasology.gestalt.entitysystem.event.Event;
 
 @OwnerEvent
 public class MaxHealthChangedEvent implements Event {

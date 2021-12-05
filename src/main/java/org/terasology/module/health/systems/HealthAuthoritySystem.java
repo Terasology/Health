@@ -5,13 +5,14 @@ package org.terasology.module.health.systems;
 
 import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.entitySystem.event.EventPriority;
-import org.terasology.engine.entitySystem.event.ReceiveEvent;
+import org.terasology.engine.entitySystem.event.Priority;
 import org.terasology.engine.entitySystem.prefab.Prefab;
 import org.terasology.engine.entitySystem.prefab.PrefabManager;
 import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
 import org.terasology.engine.registry.In;
+import org.terasology.gestalt.entitysystem.event.ReceiveEvent;
 import org.terasology.module.health.components.HealthComponent;
 import org.terasology.module.health.events.ChangeMaxHealthEvent;
 import org.terasology.module.health.events.DoDamageEvent;
@@ -25,7 +26,8 @@ public class HealthAuthoritySystem extends BaseComponentSystem {
     /**
      * Sends out an immutable notification event when maxHealth of a character is changed.
      */
-    @ReceiveEvent(priority = EventPriority.PRIORITY_TRIVIAL)
+    @Priority(EventPriority.PRIORITY_TRIVIAL)
+    @ReceiveEvent
     public void changeMaxHealth(ChangeMaxHealthEvent event, EntityRef player, HealthComponent health) {
         int oldMaxHealth = health.maxHealth;
         health.maxHealth = (int) event.getResultValue();

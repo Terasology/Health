@@ -6,16 +6,16 @@ package org.terasology.module.health.core;
 import org.terasology.engine.core.Time;
 import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.entitySystem.entity.lifecycleEvents.OnActivatedComponent;
-import org.terasology.engine.entitySystem.event.ReceiveEvent;
 import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
 import org.terasology.engine.registry.In;
+import org.terasology.gestalt.entitysystem.event.ReceiveEvent;
+import org.terasology.gestalt.naming.Name;
 import org.terasology.module.health.components.HealthComponent;
-import org.terasology.module.health.events.RegisterRegenEvent;
 import org.terasology.module.health.events.BeforeRegenEvent;
 import org.terasology.module.health.events.OnDamagedEvent;
-import org.terasology.gestalt.naming.Name;
+import org.terasology.module.health.events.RegisterRegenEvent;
 
 /**
  * A system adding core functionality and default behavior based on the mechanics defined in this module.

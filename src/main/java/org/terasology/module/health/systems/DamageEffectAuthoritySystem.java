@@ -10,7 +10,6 @@ import org.joml.Vector3fc;
 import org.terasology.engine.entitySystem.entity.EntityBuilder;
 import org.terasology.engine.entitySystem.entity.EntityManager;
 import org.terasology.engine.entitySystem.entity.EntityRef;
-import org.terasology.engine.entitySystem.event.ReceiveEvent;
 import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
@@ -29,10 +28,10 @@ import org.terasology.engine.world.block.entity.damage.BlockDamageModifierCompon
 import org.terasology.engine.world.block.family.BlockFamily;
 import org.terasology.engine.world.block.regions.ActAsBlockComponent;
 import org.terasology.engine.world.block.tiles.WorldAtlas;
+import org.terasology.gestalt.entitysystem.event.ReceiveEvent;
 import org.terasology.math.TeraMath;
 import org.terasology.module.health.events.OnDamagedEvent;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

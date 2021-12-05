@@ -4,9 +4,9 @@ package org.terasology.module.health.events;
 
 import com.google.common.base.Preconditions;
 import org.terasology.engine.entitySystem.entity.EntityRef;
-import org.terasology.engine.entitySystem.event.Event;
 import org.terasology.engine.entitySystem.prefab.Prefab;
 import org.terasology.engine.logic.health.EngineDamageTypes;
+import org.terasology.gestalt.entitysystem.event.Event;
 
 /**
  * This event should be sent to cause damage to an entity.

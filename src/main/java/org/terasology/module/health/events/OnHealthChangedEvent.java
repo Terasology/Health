@@ -4,7 +4,7 @@
 package org.terasology.module.health.events;
 
 import org.terasology.engine.entitySystem.entity.EntityRef;
-import org.terasology.engine.entitySystem.event.Event;
+import org.terasology.gestalt.entitysystem.event.Event;
 
 /**
  * This event (or a subtype) is sent whenever health changes

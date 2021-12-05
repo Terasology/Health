@@ -5,8 +5,9 @@ package org.terasology.module.health.systems;
 import org.terasology.engine.entitySystem.entity.EntityManager;
 import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.entitySystem.event.EventPriority;
-import org.terasology.engine.entitySystem.event.ReceiveEvent;
+import org.terasology.engine.entitySystem.event.Priority;
 import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
+import org.terasology.engine.entitySystem.systems.NetFilterEvent;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
 import org.terasology.engine.logic.characters.events.AttackEvent;
@@ -20,6 +21,7 @@ import org.terasology.engine.world.block.entity.damage.BlockDamageModifierCompon
 import org.terasology.engine.world.block.family.BlockFamily;
 import org.terasology.engine.world.block.regions.ActAsBlockComponent;
 import org.terasology.engine.world.block.tiles.WorldAtlas;
+import org.terasology.gestalt.entitysystem.event.ReceiveEvent;
 import org.terasology.module.health.components.BlockDamagedComponent;
 import org.terasology.module.health.components.DamageSoundComponent;
 import org.terasology.module.health.components.HealthComponent;
@@ -45,7 +47,8 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
     private Random random = new FastRandom();
 
     /** Consumes damage event if block is indestructible. */
-    @ReceiveEvent(priority = EventPriority.PRIORITY_HIGH)
+    @Priority(EventPriority.PRIORITY_HIGH)
+    @ReceiveEvent
     public void beforeDamaged(BeforeDamagedEvent event, EntityRef blockEntity, BlockComponent blockComp) {
         if (!blockComp.getBlock().isDestructible()) {
             event.consume();
@@ -53,7 +56,8 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
     }
 
     /** Consumes damage event if entity acting as block is indestructible. */
-    @ReceiveEvent(priority = EventPriority.PRIORITY_HIGH)
+    @Priority(EventPriority.PRIORITY_HIGH)
+    @ReceiveEvent
     public void beforeDamaged(BeforeDamagedEvent event, EntityRef blockEntity, ActAsBlockComponent blockComp) {
         if (blockComp.block != null && !blockComp.block.getArchetypeBlock().isDestructible()) {
             event.consume();
@@ -86,12 +90,14 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
         //      component then.
     }
 
-    @ReceiveEvent(netFilter = RegisterMode.AUTHORITY)
+    @NetFilterEvent(netFilter = RegisterMode.AUTHORITY)
+    @ReceiveEvent
     public void beforeDamage(BeforeDamagedEvent event, EntityRef entity, BlockComponent blockComp) {
         beforeDamageCommon(event, blockComp.getBlock());
     }
 
-    @ReceiveEvent(netFilter = RegisterMode.AUTHORITY)
+    @NetFilterEvent(netFilter = RegisterMode.AUTHORITY)
+    @ReceiveEvent
     public void beforeDamage(BeforeDamagedEvent event, EntityRef entity, ActAsBlockComponent blockComp) {
         if (blockComp.block != null) {
             beforeDamageCommon(event, blockComp.block.getArchetypeBlock());
@@ -113,14 +119,16 @@ public class BlockDamageAuthoritySystem extends BaseComponentSystem {
     }
 
     /** Causes damage to block without health component, leads to adding health component to the block. */
-    @ReceiveEvent(netFilter = RegisterMode.AUTHORITY)
+    @NetFilterEvent(netFilter = RegisterMode.AUTHORITY)
+    @ReceiveEvent
     public void onAttackHealthlessBlock(AttackEvent event, EntityRef targetEntity, BlockComponent blockComponent) {
         if (!targetEntity.hasComponent(HealthComponent.class)) {
             DamageAuthoritySystem.damageEntity(event, targetEntity);
         }
     }
 
-    @ReceiveEvent(netFilter = RegisterMode.AUTHORITY)
+    @NetFilterEvent(netFilter = RegisterMode.AUTHORITY)
+    @ReceiveEvent
     public void onAttackHealthlessActAsBlock(AttackEvent event, EntityRef targetEntity, ActAsBlockComponent actAsBlockComponent) {
         if (!targetEntity.hasComponent(HealthComponent.class)) {
             DamageAuthoritySystem.damageEntity(event, targetEntity);
