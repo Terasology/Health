@@ -1,4 +1,4 @@
-// Copyright 2021 The Terasology Foundation
+// Copyright 2022 The Terasology Foundation
 // SPDX-License-Identifier: Apache-2.0
 
 package org.terasology.module.health.systems;
@@ -9,6 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.terasology.engine.core.Time;
 import org.terasology.engine.entitySystem.entity.EntityManager;
 import org.terasology.engine.entitySystem.entity.EntityRef;
+import org.terasology.engine.integrationenvironment.ModuleTestingHelper;
+import org.terasology.engine.integrationenvironment.jupiter.Dependencies;
+import org.terasology.engine.integrationenvironment.jupiter.MTEExtension;
 import org.terasology.engine.logic.players.PlayerCharacterComponent;
 import org.terasology.engine.registry.In;
 import org.terasology.module.health.components.HealthComponent;
@@ -17,9 +20,6 @@ import org.terasology.module.health.core.BaseRegenAuthoritySystem;
 import org.terasology.module.health.core.BaseRegenComponent;
 import org.terasology.module.health.events.DeregisterRegenEvent;
 import org.terasology.module.health.events.DoDamageEvent;
-import org.terasology.moduletestingenvironment.MTEExtension;
-import org.terasology.moduletestingenvironment.ModuleTestingHelper;
-import org.terasology.moduletestingenvironment.extension.Dependencies;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
