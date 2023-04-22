@@ -2,6 +2,12 @@
 * Events
   * [Regeneration](regeneration.md)
   * [Restoration](restoration.md)
+* Components
+  * [Health Component](component-health.md)
+  * [BlockDamaged Component](component-block-damaged.md)
+  * [Regen Component](component-regen.md) 
+  * [DamageResist Component](component-damage-resist.md)
+  * [DamageSound Component](component-damage-sound.md)
 * Systems
   * [Damage System](system-damage.md)
   * [Block Damage System](system-block-damage.md)
