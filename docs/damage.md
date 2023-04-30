@@ -4,9 +4,9 @@ Damage refers to the reduction of health points caused by the affected entity it
 Self-inflicted causes include, for instance, falling, drowning, or poison damage.
 Damage inflicted by a third party typically involves some form of hitting the affected entity.
 
-The `DamageSystem` handles damage dealt to entities with health.
-The `BlockDamageAuthoritySystem` enables blocks to sustain some damage before getting destroyed.
-The `DamageEffectAuthoritySystem` produces block particle effect in the event of damage.
+* The `DamageSystem` handles damage dealt to entities with health.
+* The `BlockDamageAuthoritySystem` enables blocks to sustain some damage before getting destroyed.
+* The `DamageEffectAuthoritySystem` produces block particle effect in the event of damage.
 
 Send a `DoDamageEvent` to a specific entity to deal damage to it.
 
@@ -20,7 +20,7 @@ Sounds should be referenced as `[engine|<module>]:<soundFileName>` for sound fil
 Event chain:
 * `DoDamageEvent`
 * `BeforeDamageEvent`
-* Entity damaged, health component saved
+* _Entity damaged, health component saved_
 * `OnDamagedEvent`
 
 Commands:
