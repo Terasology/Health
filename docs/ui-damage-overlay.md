@@ -1,9 +1,8 @@
 # Damage Overlay
 
 The `Health` module adds a visual overlay whenever the you are damaged.
-If you hurt yourself, for instance through drowning or fall damage, the default damage overlay is displayed.
+If you hurt yourself (self-inflicted damage), for instance through falling, drowning, or poisoning, the default damage overlay is displayed.
 It consists of four red indicators, one on each side of your screen.
-The default damage overlay is also shown when you are hurt by an effect such as poison.
 
 ![Damage Overlay](./_media/damage-overlay.jpg)
 
