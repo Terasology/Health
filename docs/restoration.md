@@ -1,6 +1,7 @@
 # Restoration
 
-Handles magical healing of entities. 
+The `RestorationAuthoritySystem` handles the magical healing of entities.
+
 To heal an entity, send `DoRestoreEvent(amount, instigatorRef)`. 
 
 The event chain of restoration:
