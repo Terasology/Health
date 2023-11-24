@@ -3,15 +3,12 @@
 
 package org.terasology.module.health.systems;
 
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.terasology.engine.core.Time;
 import org.terasology.engine.entitySystem.entity.EntityManager;
 import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.integrationenvironment.ModuleTestingHelper;
 import org.terasology.engine.integrationenvironment.jupiter.IntegrationEnvironment;
-import org.terasology.engine.integrationenvironment.jupiter.MTEExtension;
 import org.terasology.engine.logic.players.PlayerCharacterComponent;
 import org.terasology.engine.registry.In;
 import org.terasology.module.health.components.HealthComponent;
@@ -24,9 +21,7 @@ import org.terasology.module.health.events.DoDamageEvent;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(MTEExtension.class)
 @IntegrationEnvironment(dependencies = { "Health" })
-@Tag("MteTest")
 public class RegenTest {
 
     @In

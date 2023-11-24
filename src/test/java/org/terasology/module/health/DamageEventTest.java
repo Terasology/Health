@@ -25,9 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(MTEExtension.class)
 @IntegrationEnvironment(dependencies = { "Health" })
-@Tag("MteTest")
 public class DamageEventTest {
     @In
     protected EntityManager entityManager;
