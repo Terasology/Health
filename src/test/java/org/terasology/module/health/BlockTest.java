@@ -13,7 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.terasology.engine.core.Time;
 import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.integrationenvironment.ModuleTestingHelper;
-import org.terasology.engine.integrationenvironment.jupiter.Dependencies;
+import org.terasology.engine.integrationenvironment.jupiter.IntegrationEnvironment;
 import org.terasology.engine.integrationenvironment.jupiter.MTEExtension;
 import org.terasology.engine.logic.characters.events.AttackEvent;
 import org.terasology.engine.registry.In;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MTEExtension.class)
-@Dependencies("Health")
+@IntegrationEnvironment(dependencies = { "Health" })
 @Tag("MteTest")
 @Disabled("The test has some weird timing issues which will sporadically fail it. (see #70)")
 public class BlockTest {
