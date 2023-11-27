@@ -79,11 +79,9 @@ public class DamageEffectAuthoritySystem extends BaseComponentSystem {
      */
     @ReceiveEvent
     public void onDamaged(OnDamagedEvent event, EntityRef entity, ActAsBlockComponent blockComponent, LocationComponent location) {
-        if (blockComponent.block != null) {
+        if (blockComponent.block != null && isEffectsEnabled(event)) {
             //TODO: the BlockDamageModifierComponent also holds a modifier for `impulsePower` - should that influence the particle effect?
-            if (isEffectsEnabled(event)) {
-                createBlockParticleEffect(blockComponent.block, location.getWorldPosition(new Vector3f()));
-            }
+            createBlockParticleEffect(blockComponent.block, location.getWorldPosition(new Vector3f()));
         }
     }
 

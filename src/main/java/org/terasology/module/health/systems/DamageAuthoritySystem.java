@@ -233,14 +233,13 @@ public class DamageAuthoritySystem extends BaseComponentSystem {
         horizVelocity.y = 0;
         float velocity = horizVelocity.length();
 
-        if (velocity > healthComponent.horizontalDamageSpeedThreshold) {
-            if (characterSounds.lastSoundTime + CharacterSoundSystem.MIN_TIME < time.getGameTimeInMs()) {
-                StaticSound sound = random.nextItem(characterSounds.landingSounds);
-                if (sound != null) {
-                    entity.send(new PlaySoundEvent(sound, characterSounds.landingVolume));
-                    characterSounds.lastSoundTime = time.getGameTimeInMs();
-                    entity.saveComponent(characterSounds);
-                }
+        if (velocity > healthComponent.horizontalDamageSpeedThreshold
+                && characterSounds.lastSoundTime + CharacterSoundSystem.MIN_TIME < time.getGameTimeInMs()) {
+            StaticSound sound = random.nextItem(characterSounds.landingSounds);
+            if (sound != null) {
+                entity.send(new PlaySoundEvent(sound, characterSounds.landingVolume));
+                characterSounds.lastSoundTime = time.getGameTimeInMs();
+                entity.saveComponent(characterSounds);
             }
         }
     }
