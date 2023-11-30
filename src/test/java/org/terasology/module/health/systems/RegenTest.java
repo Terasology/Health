@@ -21,7 +21,7 @@ import org.terasology.module.health.events.DoDamageEvent;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@IntegrationEnvironment(dependencies = { "Health" })
+@IntegrationEnvironment(dependencies = "Health")
 public class RegenTest {
 
     @In

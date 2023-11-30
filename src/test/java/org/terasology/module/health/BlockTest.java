@@ -24,7 +24,7 @@ import org.terasology.module.health.components.RegenComponent;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@IntegrationEnvironment(dependencies = { "Health" })
+@IntegrationEnvironment(dependencies = "Health")
 @Disabled("The test has some weird timing issues which will sporadically fail it. (see #70)")
 public class BlockTest {
     private static final Vector3ic BLOCK_LOCATION = new Vector3i(0, 0, 0).add(0, -1, 0);

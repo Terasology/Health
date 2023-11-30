@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@IntegrationEnvironment(dependencies = { "Health" })
+@IntegrationEnvironment(dependencies = "Health")
 public class RestorationTest {
 
     @In
