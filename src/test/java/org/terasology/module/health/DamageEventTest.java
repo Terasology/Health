@@ -3,15 +3,12 @@
 
 package org.terasology.module.health;
 
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.terasology.engine.entitySystem.entity.EntityManager;
 import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.integrationenvironment.ModuleTestingHelper;
 import org.terasology.engine.integrationenvironment.TestEventReceiver;
-import org.terasology.engine.integrationenvironment.jupiter.Dependencies;
-import org.terasology.engine.integrationenvironment.jupiter.MTEExtension;
+import org.terasology.engine.integrationenvironment.jupiter.IntegrationEnvironment;
 import org.terasology.engine.logic.health.EngineDamageTypes;
 import org.terasology.engine.logic.players.PlayerCharacterComponent;
 import org.terasology.engine.registry.In;
@@ -25,9 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(MTEExtension.class)
-@Dependencies("Health")
-@Tag("MteTest")
+@IntegrationEnvironment(dependencies = "Health")
 public class DamageEventTest {
     @In
     protected EntityManager entityManager;
